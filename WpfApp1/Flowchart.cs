@@ -15,13 +15,13 @@ namespace WpfApp1
         public Flowchart() {
             _chart = new ObservableCollection<ObservableCollection<ObservableCollection<string>>>();
             _chart.CollectionChanged += chart_collectionChanged;
-            for (int i = 0; i <= 3; i++)
-            {
-                _chart.Add(new ObservableCollection<ObservableCollection<string>>
-                {
-                    new ObservableCollection<string>{"a","b"}
-                });
-            }
+            //for (int i = 0; i <= 3; i++)
+            //{
+            //    _chart.Add(new ObservableCollection<ObservableCollection<string>>
+            //    {
+            //        new ObservableCollection<string>{"a","b"}
+            //    });
+            // }
 
         }
 

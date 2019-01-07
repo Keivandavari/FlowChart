@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -13,8 +15,25 @@ namespace WpfApp1
     [TemplatePart(Name = "PART_Content", Type = typeof(Grid))]
     public class FlowChartDiagram : UserControl
     {
-        public static readonly DependencyProperty ChartProperty = DependencyProperty.Register("Chart", typeof(ObservableCollection<ObservableCollection<ObservableCollection<string>>>), typeof(FlowChartDiagram), new PropertyMetadata(new ObservableCollection<ObservableCollection<ObservableCollection<string>>>(), );
-       
+        public static readonly DependencyProperty ChartProperty = DependencyProperty.Register("Chart", typeof(ObservableCollection<ObservableCollection<ObservableCollection<string>>>), typeof(FlowChartDiagram), new PropertyMetadata(EventsPropertyChanged));
+
+        private static void EventsPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((FlowChartDiagram)d).EventsPropertyChanged(e);
+        }
+
+        private void EventsPropertyChanged(DependencyPropertyChangedEventArgs args)
+        {
+            var newCollection = args.NewValue as INotifyCollectionChanged;
+            if (newCollection != null)
+            { }
+        }
+
+        public IEnumerable Events
+        {
+            get { return (IEnumerable)GetValue(ChartProperty); }
+            set { SetValue(ChartProperty, value); }
+        }
         public ObservableCollection<ObservableCollection<ObservableCollection<string>>> Chart
         {
             get { return (ObservableCollection<ObservableCollection<ObservableCollection<string>>>)GetValue(ChartProperty); }
@@ -49,7 +68,6 @@ namespace WpfApp1
         }
         private void UpdateData()
         {
-
             if (ContentGrid == null)
                 return;
             int i = 0;
