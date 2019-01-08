@@ -97,7 +97,7 @@ namespace WpfApp1
                     VerticalAlignment = VerticalAlignment.Top,
                     HorizontalAlignment = HorizontalAlignment.Left,
                     Stroke = Brushes.Black,
-                    StrokeThickness = 2,
+                    StrokeThickness = 1,
                     Margin = new Thickness((MaxAvailableWidth / stacks) * (j + 1 / 4), (MaxAvailableHeight / slices) * (k + 1 / 4), 0, 0)
                 };
                 ContentGrid.Children.Add(rect);
@@ -112,7 +112,7 @@ namespace WpfApp1
                     VerticalAlignment = VerticalAlignment.Top,
                     HorizontalAlignment = HorizontalAlignment.Left,
                     Stroke = Brushes.Black,
-                    StrokeThickness = 2,
+                    StrokeThickness = 1,
                     Margin = new Thickness((MaxAvailableWidth / stacks) * (j + 1 / 4), (MaxAvailableHeight / slices) * (k + 1 / 4), 0, 0)
                 };
                 ContentGrid.Children.Add(ellipse);

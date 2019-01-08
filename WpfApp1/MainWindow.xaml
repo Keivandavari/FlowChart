@@ -15,15 +15,15 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="42"/>
+            <RowDefinition Height="24"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <TextBox x:Name="inputsT" HorizontalAlignment="Stretch" Height="23" TextWrapping="Wrap" Text="Inputs (Space Sperated)" VerticalAlignment="Center" GotFocus="In_Focused"/>
-        <TextBox x:Name="outputT" HorizontalAlignment="Stretch" Height="23" TextWrapping="Wrap" Text="Output" VerticalAlignment="Center" Grid.Column="1"/>
-        <TextBox x:Name="fT" HorizontalAlignment="Stretch" Height="23" TextWrapping="Wrap" Text="Function Name" VerticalAlignment="Center" Grid.Column="2"/>
-        <Button Content="Add" Grid.Column="3" HorizontalAlignment="Stretch" VerticalAlignment="Center" Click="Add_Clicked"/>
+        <TextBox x:Name="inputsT" HorizontalAlignment="Stretch" Height="24" TextWrapping="Wrap" Text="Inputs (Space Sperated)" VerticalAlignment="Center" GotFocus="In_Focused"/>
+        <TextBox x:Name="outputT" HorizontalAlignment="Stretch" Height="24" TextWrapping="Wrap" Text="Output" VerticalAlignment="Center" Grid.Column="1"/>
+        <TextBox x:Name="fT" HorizontalAlignment="Stretch" Height="24" TextWrapping="Wrap" Text="Function Name" VerticalAlignment="Center" Grid.Column="2"/>
+        <Button Content="Add" Grid.Column="3" HorizontalAlignment="Stretch" VerticalAlignment="Center" Click="Add_Clicked" Height="20" Margin="0,2"/>
         <Grid x:Name="diagram" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4">
-            <Canvas x:Name="canva"/>
+            <Canvas HorizontalAlignment="Stretch" VerticalAlignment="Stretch" x:Name="canva"/>
         </Grid>
     </Grid>
 </Window>
