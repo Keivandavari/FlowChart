@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -30,16 +31,14 @@ namespace WpfApp1
         public MainWindow()
         {
             InitializeComponent();
-            //MaxAvailableHeight = canva.ActualHeight;
-            //MaxAvailableWidth = canva.ActualWidth;
-            Grid stackGrid = new Grid()
-            {
-                //Name = "stackGrid" + j.ToString(),
-                VerticalAlignment = VerticalAlignment.Center,
-                HorizontalAlignment = HorizontalAlignment.Left,
-                //Width = (MaxAvailableWidth / stacks),
-                //Margin = new Thickness((MaxAvailableWidth / stacks) * (j), 0, 0, 0)
-            };
+            this.DataContext = fc;
+            //Binding b = new Binding("");
+            //b.Mode = BindingMode.OneWay;
+            //b.Source = fc.Warning;
+            //b.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+
+            ////Attach the binding to the target
+            //WarningBlock.SetBinding(TextBlock.TextProperty, b);
 
         }
 
@@ -47,10 +46,8 @@ namespace WpfApp1
         {
             MaxAvailableHeight = canva.ActualHeight;
             MaxAvailableWidth = canva.ActualWidth;
-            fc.Add(inputsT.Text.Split(' ').ToList(), outputT.Text, fT.Text);
+            fc.Add(inputsT.Text.Split(',').ToList().Select(t => t.Trim()).ToList(), outputT.Text, fT.Text);
             Draw();
-            //diagram.InvalidateVisual();
-            //((MainWindow)System.Windows.Application.Current.MainWindow).UpdateLayout();
         }
 
         private void Draw()

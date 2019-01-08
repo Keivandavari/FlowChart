@@ -14,21 +14,8 @@ namespace WpfApp1
     {
         public Flowchart() {
             _chart = new List<List<List<string>>>();
-            //for (int i = 0; i <= 3; i++)
-            //{
-            //    _chart.Add(new List<List<string>>
-            //    {
-            //        new List<string>{"a","b"}
-            //    });
-            // }
 
         }
-
-        private void chart_collectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            NotifyPropertyChanged("Chart");
-        }
-
         private bool isCycle(List<string> inputs,string firstInput)
         {
             if (!inputs.Any()) { return false; }
@@ -71,7 +58,7 @@ namespace WpfApp1
                 {
                     if (input[r].Equals(input[s]) && r!=s)
                     {
-                        Warning = "Inputs have  duplicates!";
+                        Warning = "Inputs have duplicates!";
                         return;
                     }
                 }
@@ -99,6 +86,7 @@ namespace WpfApp1
             bool firstTimeFound = false;
             if (!functions.Contains(fName))
             {
+                Warning = "";
                 functions.Add(fName);
                 if (!outputs.Contains(output)) outputs.Add(output);
                 inputs.Add(input);
@@ -179,7 +167,7 @@ namespace WpfApp1
             set
             {
                 _warning = value;
-                NotifyPropertyChanged("Warning");
+                OnPropertyChanged("Warning");
             }
         }
         private List<List<List<string>>> _chart;
@@ -195,9 +183,13 @@ namespace WpfApp1
             }
         }
         public event PropertyChangedEventHandler PropertyChanged;
-        private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
+        protected void OnPropertyChanged(string name)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(name));
+            }
         }
     }
 }
