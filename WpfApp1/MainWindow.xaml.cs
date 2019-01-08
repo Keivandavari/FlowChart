@@ -67,7 +67,7 @@ namespace WpfApp1
                 int numberofSlices = fc.chart[j].Count > 5 ? fc.chart[j].Count : 5;
                 for (int k = 0; k < fc.chart[j].Count; k++)
                 {
-                    DrawElement(j, k, numberofSlices, numberofStacks);
+                    DrawElement(j, k, numberofSlices, numberofStacks,i);
                     //DrawLines(i,j,k, numberofStacks);
 
                 }
@@ -78,19 +78,22 @@ namespace WpfApp1
         {
             int slicesend = fc.chart[j + 1].Count > 5 ? fc.chart[j + 1].Count : 5;
             int slicesstart = fc.chart[j].Count > 5 ? fc.chart[j].Count : 5;
-            int y = 0;
+            int y,z = 0;
             for (int x = 1; x <= fc.chart[j][k].Count - 1; x++)
             {
-                for(y=0; y<= fc.chart[j+1].Count -1;y++)
+                for (y = j; y <= stacks; y++)
                 {
-                    if (fc.chart[j + 1][y][0].Equals(fc.chart[j][k][0])) break;
+                    for (z = 0; z <= fc.chart[y].Count - 1; z++)
+                    {
+                        if (fc.chart[y][z][0].Equals(fc.chart[j][k][x])) break;
+                    }
                 }
                 var line = new Line()
                 {
                     X1 = (canva.ActualWidth / stacks) * (j + 1 / 4) + (canva.ActualWidth / stacks) / 2,
                     Y1 = (canva.ActualHeight / slicesstart) * (k) + topaddOn + (canva.ActualHeight / slicesstart) / 4,
-                    X2 = (canva.ActualWidth / stacks) * ((j + 1) + 1 / 4),
-                    Y2 = (canva.ActualHeight / slicesend) * (y) + topaddOn + (canva.ActualHeight / slicesend) / 4,
+                    X2 = (canva.ActualWidth / stacks) * ((y+1) + 1 / 4),
+                    Y2 = (canva.ActualHeight / slicesend) * (z) + topaddOn + (canva.ActualHeight / slicesend) / 4,
                     Stroke = Brushes.Black,
                     StrokeThickness = 1
                 };
@@ -99,7 +102,7 @@ namespace WpfApp1
             }
         }
 
-        private void DrawElement(int j, int k, int slices, int stacks)
+        private void DrawElement(int j, int k, int slices, int stacks, int numofcolumns)
         {
 
             Rectangle rect = new Rectangle();
@@ -112,14 +115,7 @@ namespace WpfApp1
             {
                 topaddOn = 0;
             }
-            if (fc.chart[j+1].Count <= 5)
-            {
-                topaddOnEnd = (5 / 2) * (canva.ActualHeight / 5) - ((fc.chart[j+1].Count) / 2 - 1 / 4) * (canva.ActualHeight / 5);
-            }
-            else
-            {
-                topaddOnEnd = 0;
-            }
+            
 
             if (j % 2 == 0)
             {
@@ -165,22 +161,40 @@ namespace WpfApp1
             };
             canva.Children.Add(textBlock);
             textBlock.Margin = new Thickness((canva.ActualWidth / stacks) * (j + 1 / 4) + (canva.ActualWidth / stacks) / 5 - textBlock.ActualWidth, (canva.ActualHeight / slices) * (k) + (canva.ActualHeight / slices) / 6 + topaddOn, 0, 0);
-            int slicesend = fc.chart[j + 1].Count > 5 ? fc.chart[j + 1].Count : 5;
+            int slicesend = 0;
             int slicesstart = fc.chart[j].Count > 5 ? fc.chart[j].Count : 5;
-            int y = 0;
+            int z=0,y = 0;
             for (int x = 1; x <= fc.chart[j][k].Count - 1; x++)
             {
-                for (y = 0; y <= fc.chart[j + 1].Count - 1; y++)
+                for (y = j; y <= numofcolumns; y++)
                 {
-                    if (fc.chart[j + 1][y][0].Equals(fc.chart[j][k][x])) break;
-                }
-                y = y > 0 ? y : 0;
+                    bool isFound = false;
+                    for (z = 0; z <= fc.chart[y].Count - 1; z++)
+                    {
+                        if (fc.chart[y][z][0].Equals(fc.chart[j][k][x]))
+                        {
+                            isFound = true;
+                            slicesend = fc.chart[y].Count > 5 ? fc.chart[y].Count : 5;
+                            if (fc.chart[y].Count <= 5)
+                            {
+                                topaddOnEnd = (5 / 2) * (canva.ActualHeight / 5) - ((fc.chart[y].Count) / 2 - 1 / 4) * (canva.ActualHeight / 5);
+                            }
+                            else
+                            {
+                                topaddOnEnd = 0;
+                            }
+                            break;
+                        }
+                    }
+                    if (isFound) break;
+
+                } 
                 var line = new Line()
                 {
                     X1 = (canva.ActualWidth / stacks) * (j + 1 / 4) + (canva.ActualWidth / stacks) / 2,
                     Y1 = (canva.ActualHeight / slicesstart) * (k) + topaddOn + (canva.ActualHeight / slicesstart) / 4,
-                    X2 = (canva.ActualWidth / stacks) * ((j + 1) + 1 / 4),
-                    Y2 = (canva.ActualHeight / slicesend) * (y) + topaddOnEnd + (canva.ActualHeight / slicesend) / 4,
+                    X2 = (canva.ActualWidth / stacks) * ((y) + 1 / 4),
+                    Y2 = (canva.ActualHeight / slicesend) * (z) + topaddOnEnd + (canva.ActualHeight / slicesend) / 4,
                     Stroke = Brushes.Black,
                     StrokeThickness = 1
                 };
