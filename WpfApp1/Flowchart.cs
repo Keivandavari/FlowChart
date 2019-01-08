@@ -13,13 +13,12 @@ namespace WpfApp1
     public class Flowchart :INotifyPropertyChanged
     {
         public Flowchart() {
-            _chart = new ObservableCollection<ObservableCollection<ObservableCollection<string>>>();
-            _chart.CollectionChanged += chart_collectionChanged;
+            _chart = new List<List<List<string>>>();
             //for (int i = 0; i <= 3; i++)
             //{
-            //    _chart.Add(new ObservableCollection<ObservableCollection<string>>
+            //    _chart.Add(new List<List<string>>
             //    {
-            //        new ObservableCollection<string>{"a","b"}
+            //        new List<string>{"a","b"}
             //    });
             // }
 
@@ -54,21 +53,21 @@ namespace WpfApp1
                 };
                 for (int i = 0; i <= function.Count-1;i++)
                 {
-                    chart.Add(new ObservableCollection<ObservableCollection<string>>());
+                    chart.Add(new List<List<string>>());
                     bool isFound = false;
                     //if (i == function.Count - 2) { continue; }
                     if (i == function.Count - 1)
                     {
-                        ObservableCollection<string> func = new ObservableCollection<string>(input);
-                        func.Add(fName);
-                        func.Add(output);
-                        chart[maxStackNumber + 1].Add(func);
+                        //List<string> func = new List<string>(input);
+                        //func.Add(fName);
+                        //func.Add(output);
+                        chart[maxStackNumber + 1].Add(new List<string>() { function.Last(), function[function.Count -2] });
                         if (!firstTimeFound)
                         {
                             for (int l = 0; l < i; l++)
                             {
-                                if (l == i - 1) chart[maxStackNumber + Convert.ToInt32(adjustements[l])].Add(new ObservableCollection<string>() { function[l] });
-                                else chart[currentStackNumber + Convert.ToInt32(adjustements[l])].Add(new ObservableCollection<string>() { function[l], function.Last() });
+                                if (l == i - 1) chart[maxStackNumber + Convert.ToInt32(adjustements[l])].Add(new List<string>() { function[l] });
+                                else chart[currentStackNumber + Convert.ToInt32(adjustements[l])].Add(new List<string>() { function[l], function.Last() });
                             }
                         }
                         continue;
@@ -83,15 +82,15 @@ namespace WpfApp1
                                 {
                                     if (j == 0 && !firstTimeFound)
                                     {
-                                        chart.Insert(0, new ObservableCollection<ObservableCollection<string>>());
-                                        chart.Insert(0, new ObservableCollection<ObservableCollection<string>>());
+                                        chart.Insert(0, new List<List<string>>());
+                                        chart.Insert(0, new List<List<string>>());
                                     }
                                 }
                                 if (!firstTimeFound)
                                 {
                                     for(int l = 0; l < i; l++)
                                     {
-                                        chart[j - Convert.ToInt32(adjustements[l])].Add(new ObservableCollection<string>() { function[l], function.Last() });
+                                        chart[j - Convert.ToInt32(adjustements[l])].Add(new List<string>() { function[l], function.Last() });
                                     }
                                 }
                                 currentStackNumber = j - Convert.ToInt32(adjustements[i]);
@@ -106,8 +105,8 @@ namespace WpfApp1
                     if (!isFound && !firstTimeFound) continue;
                     else if (!isFound && firstTimeFound)
                     {
-                        if (i <= function.Count - 3) chart[currentStackNumber].Add(new ObservableCollection<string>() { function[i], function.Last() });
-                        else if (i == function.Count - 2) chart[currentStackNumber + 2].Add(new ObservableCollection<string>() { function[i] });
+                        if (i <= function.Count - 3) chart[currentStackNumber].Add(new List<string>() { function[i], function.Last() });
+                        else if (i == function.Count - 2) chart[currentStackNumber + 2].Add(new List<string>() { function[i] });
                     }
                 }
             }
@@ -117,8 +116,8 @@ namespace WpfApp1
             }
         }
 
-        private ObservableCollection<ObservableCollection<ObservableCollection<string>>> _chart;
-        public ObservableCollection<ObservableCollection<ObservableCollection<string>>> chart
+        private List<List<List<string>>> _chart;
+        public List<List<List<string>>> chart
         {
             get
             {

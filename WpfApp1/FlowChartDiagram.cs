@@ -15,7 +15,7 @@ namespace WpfApp1
     [TemplatePart(Name = "PART_Content", Type = typeof(Grid))]
     public class FlowChartDiagram : UserControl
     {
-        public static readonly DependencyProperty ChartProperty = DependencyProperty.Register("Chart", typeof(ObservableCollection<ObservableCollection<ObservableCollection<string>>>), typeof(FlowChartDiagram), new PropertyMetadata(EventsPropertyChanged));
+        public static readonly DependencyProperty ChartProperty = DependencyProperty.Register("Chart", typeof(List<List<List<string>>>), typeof(FlowChartDiagram), new PropertyMetadata(EventsPropertyChanged));
 
         private static void EventsPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -34,9 +34,9 @@ namespace WpfApp1
             get { return (IEnumerable)GetValue(ChartProperty); }
             set { SetValue(ChartProperty, value); }
         }
-        public ObservableCollection<ObservableCollection<ObservableCollection<string>>> Chart
+        public List<List<List<string>>> Chart
         {
-            get { return (ObservableCollection<ObservableCollection<ObservableCollection<string>>>)GetValue(ChartProperty); }
+            get { return (List<List<List<string>>>)GetValue(ChartProperty); }
             set { SetValue(ChartProperty, value); }
         }
         Grid ContentGrid { get; set; }
