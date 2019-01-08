@@ -68,37 +68,8 @@ namespace WpfApp1
                 for (int k = 0; k < fc.chart[j].Count; k++)
                 {
                     DrawElement(j, k, numberofSlices, numberofStacks,i);
-                    //DrawLines(i,j,k, numberofStacks);
 
                 }
-            }
-        }
-
-        private void DrawLines(int i, int j, int k, int stacks)
-        {
-            int slicesend = fc.chart[j + 1].Count > 5 ? fc.chart[j + 1].Count : 5;
-            int slicesstart = fc.chart[j].Count > 5 ? fc.chart[j].Count : 5;
-            int y,z = 0;
-            for (int x = 1; x <= fc.chart[j][k].Count - 1; x++)
-            {
-                for (y = j; y <= stacks; y++)
-                {
-                    for (z = 0; z <= fc.chart[y].Count - 1; z++)
-                    {
-                        if (fc.chart[y][z][0].Equals(fc.chart[j][k][x])) break;
-                    }
-                }
-                var line = new Line()
-                {
-                    X1 = (canva.ActualWidth / stacks) * (j + 1 / 4) + (canva.ActualWidth / stacks) / 2,
-                    Y1 = (canva.ActualHeight / slicesstart) * (k) + topaddOn + (canva.ActualHeight / slicesstart) / 4,
-                    X2 = (canva.ActualWidth / stacks) * ((y+1) + 1 / 4),
-                    Y2 = (canva.ActualHeight / slicesend) * (z) + topaddOn + (canva.ActualHeight / slicesend) / 4,
-                    Stroke = Brushes.Black,
-                    StrokeThickness = 1
-                };
-                canva.Children.Add(line);
-
             }
         }
 
@@ -146,11 +117,6 @@ namespace WpfApp1
                 };
                 canva.Children.Add(ellipse);
                 ellipse.Margin = new Thickness((canva.ActualWidth / stacks) * (j + 1 / 4), (canva.ActualHeight / slices) * (k) + topaddOn, 0, 0);
-                //portAxis.Add(new Tuple<List<string>, Point, Point>(fc.chart[j][k],
-                //    new Point((canva.ActualWidth / stacks) * (j + 1 / 4),
-                //   (canva.ActualHeight / slices) * (k) + topaddOn + (canva.ActualHeight / slices) / 4),
-                //    new Point((canva.ActualWidth / stacks) * (j + 1 / 4) + (canva.ActualHeight / slices) / 2,
-                //    (canva.ActualHeight / slices) * (k) + topaddOn + (canva.ActualHeight / slices) / 4)));
             }
             var textBlock = new TextBlock()
             {
@@ -166,7 +132,7 @@ namespace WpfApp1
             int z=0,y = 0;
             for (int x = 1; x <= fc.chart[j][k].Count - 1; x++)
             {
-                for (y = j; y <= numofcolumns; y++)
+                for (y = 0; y <= numofcolumns; y++)
                 {
                     bool isFound = false;
                     for (z = 0; z <= fc.chart[y].Count - 1; z++)

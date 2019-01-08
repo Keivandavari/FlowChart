@@ -29,12 +29,68 @@ namespace WpfApp1
             NotifyPropertyChanged("Chart");
         }
 
+        private bool isCycle(List<string> inputs,string firstInput)
+        {
+            if (!inputs.Any()) { return false; }
+            else
+            {
+                List<string> vs = new List<string>();
+                for (int i = 0; i <= inputs.Count - 1; i++)
+                {
+                    foreach (var item in allFuncs.Where(s => s.Contains(inputs[i])))
+                    {
+                        if (!item.Last().Equals(inputs[i]))
+                             vs.Add(item.Last());
+                    }
+                }
+                if (vs.Contains(firstInput))
+                {
+                    return true;
+                }
+                return isCycle(vs, firstInput);
+            }
+        }
+
         List<string> functions = new List<string>();
         List<string> outputs = new List<string>();
         List<List<string>> inputs = new List<List<string>>();
-
+        List<List<string>> allFuncs = new List<List<string>>();
         public void Add(List<string> input, string output, string fName)
         {
+            for(int r=0; r <= input.Count -1; r++)
+            {
+                if(input[r].Equals(output))
+                {
+                    Warning = "Inputs and output have duplicates!";
+                    return;
+                }
+            }
+            for (int r = 0; r <= input.Count - 1; r++)
+            {
+                for (int s = 0; s <= input.Count - 1; s++)
+                {
+                    if (input[r].Equals(input[s]) && r!=s)
+                    {
+                        Warning = "Inputs have  duplicates!";
+                        return;
+                    }
+                }
+            }
+            List<string> function2 = new List<string>(input)
+                {
+                    fName,
+                    output
+                };
+            allFuncs.Add(function2);
+            List<string> a = new List<string>();
+            a.Add(output);
+            if (isCycle(a, output))
+            {
+                allFuncs.Remove(allFuncs.Last());
+                Warning = "There is a Loop!";
+                return;
+            }
+
             var adjustements = new List<double>(new double[input.Count]);
             adjustements.Add(2);
             adjustements.Add(1);
@@ -51,16 +107,14 @@ namespace WpfApp1
                     output,
                     fName
                 };
+                allFuncs.Add(function2);
+
                 for (int i = 0; i <= function.Count-1;i++)
                 {
                     chart.Add(new List<List<string>>());
                     bool isFound = false;
-                    //if (i == function.Count - 2) { continue; }
                     if (i == function.Count - 1)
                     {
-                        //List<string> func = new List<string>(input);
-                        //func.Add(fName);
-                        //func.Add(output);
                         chart[maxStackNumber + 1].Add(new List<string>() { function.Last(), function[function.Count -2] });
                         if (!firstTimeFound)
                         {
@@ -112,10 +166,22 @@ namespace WpfApp1
             }
             else
             {
-                string warning = "This Function is Already Exist!";
+                Warning = "This Function is Already Exist!";
             }
         }
-
+        private string _warning;
+        public string Warning
+        {
+            get
+            {
+                return _warning;
+            }
+            set
+            {
+                _warning = value;
+                NotifyPropertyChanged("Warning");
+            }
+        }
         private List<List<List<string>>> _chart;
         public List<List<List<string>>> chart
         {
