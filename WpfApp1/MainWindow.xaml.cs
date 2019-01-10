@@ -10,11 +10,16 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using Color = System.Drawing.Color;
+using Point = System.Windows.Point;
+using Brushes = System.Windows.Media.Brushes;
+using Rectangle = System.Windows.Shapes.Rectangle;
+using System.Drawing;
+using System.Windows.Media;
 
 namespace WpfApp1
 {
@@ -25,6 +30,7 @@ namespace WpfApp1
     {
         Flowchart fc = new Flowchart();
         double topaddOn, topaddOnEnd;
+        int colorCounter = 0;
         protected internal double MaxAvailableHeight { get; private set; }
         protected internal double MaxAvailableWidth { get; private set; }
         public MainWindow()
@@ -78,7 +84,7 @@ namespace WpfApp1
         private void DrawElements(int j, int k, int slices1, int stacks, int numofcolumns)
         {
 
-            Rectangle rect = new Rectangle();
+            Rectangle rect = new System.Windows.Shapes.Rectangle();
             Ellipse ellipse = new Ellipse();
             if (fc.chart[j].Count <= 5)
             {
@@ -130,7 +136,7 @@ namespace WpfApp1
             };
             canva.Children.Add(textBlock);
             textBlock.Margin = new Thickness((canva.ActualWidth / stacks) * (j) + (canva.ActualWidth / stacks) / 5 - textBlock.ActualWidth, (canva.ActualHeight / slices1) * (k) + (canva.ActualHeight / slices1) / 6 + topAddOn(j), 0, 0);
-
+            
             int z=0,y = 0;
             for (int x = 1; x <= fc.chart[j][k].Count - 1; x++)
             {
@@ -172,18 +178,26 @@ namespace WpfApp1
             }
         }
 
-        private void Drawlines(int j, int k,int x, int y, int z, int stacks)
+        private void Drawlines(int j, int k, int x, int y, int z, int stacks)
         {
-            //Random rand = new Random();
+            colorCounter++;
+            List<KnownColor> colors = Enum.GetValues(typeof(KnownColor))
+                                      .Cast<KnownColor>()
+                                      .ToList();
+            Color color = new Color();
+            Random rand = new Random();
+            color = Color.FromName(colors[colorCounter].ToString());
+
+            
             //Color color = Color.FromArgb(Convert.ToByte(rand.Next(256)), Convert.ToByte(rand.Next(256)),
             //                Convert.ToByte(rand.Next(256)), Convert.ToByte(rand.Next(256)));
             int distance = y - j;
             double nextHeight = 0;
             List<Point> points = new List<Point>();
             points.Add(new Point((canva.ActualWidth / stacks) * (j) + (canva.ActualWidth / stacks) / 2,
-                     (canva.ActualHeight / slices(j)) * (k) + topAddOn(j) + (canva.ActualHeight / slices(j))/2 * x/ (fc.chart[j][k].Count)));
-            points.Add(new Point((canva.ActualWidth / stacks) * (j) + (canva.ActualWidth / stacks)/ 2,
-         (canva.ActualHeight / slices(j)) * (k) + topAddOn(j) + (canva.ActualHeight / slices(j))/2 * x / fc.chart[j][k].Count));
+                     (canva.ActualHeight / slices(j)) * (k) + topAddOn(j) + (canva.ActualHeight / slices(j)) / 2 * x / (fc.chart[j][k].Count)));
+            points.Add(new Point((canva.ActualWidth / stacks) * (j) + (canva.ActualWidth / stacks) / 2,
+         (canva.ActualHeight / slices(j)) * (k) + topAddOn(j) + (canva.ActualHeight / slices(j)) / 2 * x / fc.chart[j][k].Count));
             if (distance > 0)
             {
 
@@ -191,10 +205,10 @@ namespace WpfApp1
                 {
                     if (i == y - 1)
                     {
-                        if(y%2==0)
+                        if (y % 2 == 0)
                         {
                             List<string> L = new List<string>();
-                            foreach(var item in fc.allFuncs)
+                            foreach (var item in fc.allFuncs)
                             {
                                 if (item.Last().Equals(fc.chart[y][z][0]))
                                 {
@@ -204,20 +218,20 @@ namespace WpfApp1
                             }
                             int numOfInputs = L.Count - 1 == 1 ? 2 : L.Count - 1;
                             int cIndex = L.IndexOf(fc.chart[j][k][0]);
-                            nextHeight = (canva.ActualHeight / slices(y)) * (z) + topaddOnEnd + (canva.ActualHeight / slices(y)) * cIndex / (numOfInputs-1)/2;
+                            nextHeight = (canva.ActualHeight / slices(y)) * (z) + topaddOnEnd + (canva.ActualHeight / slices(y)) * cIndex / (numOfInputs - 1) / 2;
                         }
                         else
                         {
                             int numOfInputs = fc.allFuncs.FirstOrDefault(s => s.Contains(fc.chart[y][z][0])).Count - 2 == 1 ? 2 : fc.allFuncs.FirstOrDefault(s => s.Contains(fc.chart[y][z][0])).Count - 2;
-                            int cIndex = fc.allFuncs.FirstOrDefault(s => s.Contains(fc.chart[y][z][0])).IndexOf(fc.chart[j][k][0]) ;
-                            nextHeight = (canva.ActualHeight / slices(y)) * (z) + topaddOnEnd + (canva.ActualHeight / slices(y))*cIndex / (numOfInputs-1)/2;
+                            int cIndex = fc.allFuncs.FirstOrDefault(s => s.Contains(fc.chart[y][z][0])).IndexOf(fc.chart[j][k][0]);
+                            nextHeight = (canva.ActualHeight / slices(y)) * (z) + topaddOnEnd + (canva.ActualHeight / slices(y)) * cIndex / (numOfInputs - 1) / 2;
 
                         }
-                        points.Add(new Point(points[1].X + canva.ActualHeight / slices(y)/2 / (slices(y) + 1) * (z+1),
+                        points.Add(new Point(points[1].X + canva.ActualHeight / slices(y) / 2 / (slices(y) + 1) * (z + 1),
                         points[1].Y));
                         points.Add(new Point(points[2].X,
                         nextHeight));
-                        points.Add(new Point((canva.ActualWidth / stacks) * ((y)) - (canva.ActualWidth / stacks)/10 ,
+                        points.Add(new Point((canva.ActualWidth / stacks) * ((y)) - (canva.ActualWidth / stacks) / 10,
                         nextHeight));
                         points.Add(new Point((canva.ActualWidth / stacks) * ((y)) - (canva.ActualWidth / stacks) / 10,
                         (canva.ActualHeight / slices(y)) * (z) + topaddOnEnd + (canva.ActualHeight / slices(y)) / 4));
@@ -229,7 +243,7 @@ namespace WpfApp1
                         bool isfound = false;
                         for (int r = 0; r < fc.chart[i + 1].Count; r++)
                         {
-                            if (points.Last().Y < (r +1)* canva.ActualHeight / slices(i + 1) + topAddOn(i + 1))
+                            if (points.Last().Y < (r + 1) * canva.ActualHeight / slices(i + 1) + topAddOn(i + 1))
                             {
                                 nextHeight = r * canva.ActualHeight / slices(i + 1) -
                                            canva.ActualHeight / slices(i + 1) / 5 + topAddOn(i + 1);
@@ -246,8 +260,10 @@ namespace WpfApp1
                         points.Add(new Point(points[3].X + (canva.ActualWidth / stacks) * 1 / 2,
                         nextHeight));
                     }
+                    System.Windows.Media.Color color1 = System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
                     for (int v = 0; v < points.Count - 1; v++)
                     {
+
                         var line = new Line()
                         {
                             X1 = points[v].X,
@@ -265,11 +281,8 @@ namespace WpfApp1
                     points.Add(temp);
                     points.Add(sec);
                 }
-
-               
             }
         }
-
         private void In_Focused(object sender, RoutedEventArgs e)
         {
             inputsT.SelectAll();

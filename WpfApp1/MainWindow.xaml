@@ -18,6 +18,7 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="24"/>
+            <RowDefinition Height="24"/> 
             <RowDefinition/>
         </Grid.RowDefinitions>
         <TextBlock Text="Comma Sperated In: " Grid.Column="0"/>
@@ -27,11 +28,11 @@
         <TextBlock Text=" Function Name:" Grid.Column="4"/>
         <TextBox x:Name="fT" HorizontalAlignment="Stretch" TextWrapping="Wrap" VerticalAlignment="Center" Grid.Column="5"/>
         <Button Content="Add" Grid.Column="6" HorizontalAlignment="Stretch" VerticalAlignment="Center" Click="Add_Clicked" Height="20" Margin="0,2"/>
-        <Grid Margin="50" x:Name="diagram" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="7">
+        <TextBlock Text="{Binding Path=Warning, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" Grid.Row="1" Grid.Column="3" Grid.ColumnSpan="3" x:Name="WarningBlock" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="Red"/>
+
+        <Grid Margin="25" x:Name="diagram" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="7">
             <Canvas HorizontalAlignment="Stretch" VerticalAlignment="Stretch" x:Name="canva">
             </Canvas>
-
-            <TextBlock Text="{Binding Path=Warning, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" Width="300" x:Name="WarningBlock" HorizontalAlignment="Center" VerticalAlignment="Top" Foreground="Red"/>
         </Grid>
     </Grid>
 </Window>

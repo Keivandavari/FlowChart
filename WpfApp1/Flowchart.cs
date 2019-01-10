@@ -132,7 +132,7 @@ namespace WpfApp1
                                 {
                                     for(int l = 0; l < i; l++)
                                     {
-                                        chart[j - Convert.ToInt32(adjustements[l])].Add(new List<string>() { function[l], function.Last() });
+                                        chart[j - Convert.ToInt32(adjustements[i])].Add(new List<string>() { function[l], function.Last() });
                                     }
                                 }
                                 currentStackNumber = j - Convert.ToInt32(adjustements[i]);
