@@ -49,7 +49,7 @@ namespace WpfApp1
             {
                 if (fc.chart[i].Count == 0) break;
             }
-            int numberofStacks = i > 11 ? i : 11;
+            int numberofStacks = i > 7 ? i : 7;
             for (int j = 0; j < i; j++)
             {
                 int numberofSlices = fc.chart[j].Count > 5 ? fc.chart[j].Count : 5;
@@ -157,7 +157,7 @@ namespace WpfApp1
 
                 }
 
-                Drawlines(j, k, y, z, stacks);
+                Drawlines(j, k,x, y, z, stacks);
                 //var line = new Line()
                 //{
                 //    X1 = (canva.ActualWidth / stacks) * (j) + (canva.ActualWidth / stacks) / 2,
@@ -172,18 +172,18 @@ namespace WpfApp1
             }
         }
 
-        private void Drawlines(int j, int k, int y, int z, int stacks)
+        private void Drawlines(int j, int k,int x, int y, int z, int stacks)
         {
-            Random rand = new Random();
-            Color color = Color.FromArgb(Convert.ToByte(rand.Next(256)), Convert.ToByte(rand.Next(256)),
-                            Convert.ToByte(rand.Next(256)), Convert.ToByte(rand.Next(256)));
+            //Random rand = new Random();
+            //Color color = Color.FromArgb(Convert.ToByte(rand.Next(256)), Convert.ToByte(rand.Next(256)),
+            //                Convert.ToByte(rand.Next(256)), Convert.ToByte(rand.Next(256)));
             int distance = y - j;
             double nextHeight = 0;
             List<Point> points = new List<Point>();
             points.Add(new Point((canva.ActualWidth / stacks) * (j) + (canva.ActualWidth / stacks) / 2,
-                     (canva.ActualHeight / slices(j)) * (k) + topAddOn(j) + (canva.ActualHeight / slices(j)) / 4));
+                     (canva.ActualHeight / slices(j)) * (k) + topAddOn(j) + (canva.ActualHeight / slices(j))/2 * x/ (fc.chart[j][k].Count)));
             points.Add(new Point((canva.ActualWidth / stacks) * (j) + (canva.ActualWidth / stacks)/ 2,
-         (canva.ActualHeight / slices(j)) * (k) + topAddOn(j) + (canva.ActualHeight / slices(j)) / 4));
+         (canva.ActualHeight / slices(j)) * (k) + topAddOn(j) + (canva.ActualHeight / slices(j))/2 * x / fc.chart[j][k].Count));
             if (distance > 0)
             {
 
@@ -191,20 +191,45 @@ namespace WpfApp1
                 {
                     if (i == y - 1)
                     {
-                        nextHeight = (canva.ActualHeight / slices(y)) * (z) + topaddOnEnd + (canva.ActualHeight / slices(y)) / 4;
-                        points.Add(new Point(points[1].X + canva.ActualHeight / slices(y) / (slices(y) + 1) * (z+1),
+                        if(y%2==0)
+                        {
+                            List<string> L = new List<string>();
+                            foreach(var item in fc.allFuncs)
+                            {
+                                if (item.Last().Equals(fc.chart[y][z][0]))
+                                {
+                                    L.Add(item[item.Count - 2]);
+                                }
+                                L.Add(fc.chart[y][z][0]);
+                            }
+                            int numOfInputs = L.Count - 1 == 1 ? 2 : L.Count - 1;
+                            int cIndex = L.IndexOf(fc.chart[j][k][0]);
+                            nextHeight = (canva.ActualHeight / slices(y)) * (z) + topaddOnEnd + (canva.ActualHeight / slices(y)) * cIndex / (numOfInputs-1)/2;
+                        }
+                        else
+                        {
+                            int numOfInputs = fc.allFuncs.FirstOrDefault(s => s.Contains(fc.chart[y][z][0])).Count - 2 == 1 ? 2 : fc.allFuncs.FirstOrDefault(s => s.Contains(fc.chart[y][z][0])).Count - 2;
+                            int cIndex = fc.allFuncs.FirstOrDefault(s => s.Contains(fc.chart[y][z][0])).IndexOf(fc.chart[j][k][0]) ;
+                            nextHeight = (canva.ActualHeight / slices(y)) * (z) + topaddOnEnd + (canva.ActualHeight / slices(y))*cIndex / (numOfInputs-1)/2;
+
+                        }
+                        points.Add(new Point(points[1].X + canva.ActualHeight / slices(y)/2 / (slices(y) + 1) * (z+1),
                         points[1].Y));
                         points.Add(new Point(points[2].X,
                         nextHeight));
-                        points.Add(new Point((canva.ActualWidth / stacks) * ((y)),
+                        points.Add(new Point((canva.ActualWidth / stacks) * ((y)) - (canva.ActualWidth / stacks)/10 ,
                         nextHeight));
+                        points.Add(new Point((canva.ActualWidth / stacks) * ((y)) - (canva.ActualWidth / stacks) / 10,
+                        (canva.ActualHeight / slices(y)) * (z) + topaddOnEnd + (canva.ActualHeight / slices(y)) / 4));
+                        points.Add(new Point((canva.ActualWidth / stacks) * ((y)),
+                        (canva.ActualHeight / slices(y)) * (z) + topaddOnEnd + (canva.ActualHeight / slices(y)) / 4));
                     }
                     else
                     {
                         bool isfound = false;
                         for (int r = 0; r < fc.chart[i + 1].Count; r++)
                         {
-                            if (points.Last().Y < r * canva.ActualHeight / slices(i + 1) + topAddOn(i + 1))
+                            if (points.Last().Y < (r +1)* canva.ActualHeight / slices(i + 1) + topAddOn(i + 1))
                             {
                                 nextHeight = r * canva.ActualHeight / slices(i + 1) -
                                            canva.ActualHeight / slices(i + 1) / 5 + topAddOn(i + 1);
@@ -213,7 +238,7 @@ namespace WpfApp1
                             }
 
                         }
-                        if (!isfound) nextHeight = (canva.ActualHeight / slices(i + 1)) * fc.chart[i+1].Count + topAddOn(i+1);
+                        if (!isfound) nextHeight = points.Last().Y;
                         points.Add(new Point(points[1].X + (canva.ActualWidth / stacks) * 1 / 4,
                         points[1].Y));
                         points.Add(new Point(points[2].X,

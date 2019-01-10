@@ -42,7 +42,7 @@ namespace WpfApp1
         List<string> functions = new List<string>();
         List<string> outputs = new List<string>();
         List<List<string>> inputs = new List<List<string>>();
-        List<List<string>> allFuncs = new List<List<string>>();
+        public List<List<string>> allFuncs = new List<List<string>>();
         public void Add(List<string> input, string output, string fName)
         {
             for(int r=0; r <= input.Count -1; r++)
