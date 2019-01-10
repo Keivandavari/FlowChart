@@ -16,6 +16,7 @@ namespace WpfApp1
             _chart = new List<List<List<string>>>();
 
         }
+
         private bool isCycle(List<string> inputs,string firstInput)
         {
             if (!inputs.Any()) { return false; }
@@ -69,7 +70,7 @@ namespace WpfApp1
                     output
                 };
             allFuncs.Add(function2);
-            List<string> a = new List<string>();
+            List<string> a = new List<string>(); 
             a.Add(output);
             if (isCycle(a, output))
             {
@@ -77,7 +78,6 @@ namespace WpfApp1
                 Warning = "There is a Loop!";
                 return;
             }
-
             var adjustements = new List<double>(new double[input.Count]);
             adjustements.Add(2);
             adjustements.Add(1);

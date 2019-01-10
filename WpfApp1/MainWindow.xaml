@@ -30,6 +30,7 @@
         <Grid Margin="50" x:Name="diagram" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="7">
             <Canvas HorizontalAlignment="Stretch" VerticalAlignment="Stretch" x:Name="canva">
             </Canvas>
+
             <TextBlock Text="{Binding Path=Warning, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" Width="300" x:Name="WarningBlock" HorizontalAlignment="Center" VerticalAlignment="Top" Foreground="Red"/>
         </Grid>
     </Grid>
