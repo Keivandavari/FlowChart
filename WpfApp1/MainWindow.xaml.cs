@@ -257,8 +257,8 @@ namespace WpfApp1
                         {
                             if (points.Last().Y < (r+1) *(canva.ActualHeight / slices(i + 1))/2 + topAddOn(i + 1))
                             {
-                                if (r % 2 == 0) nextHeight = (r+1) * canva.ActualHeight / slices(i + 1)/2 + topAddOn(i + 1) - canva.ActualHeight / slices(i + 1) / 2 < points.Last().Y ? r * canva.ActualHeight / slices(i + 1) +
-                                                canva.ActualHeight / slices(i + 1) + topAddOn(i + 1) : (r+1) * canva.ActualHeight / slices(i + 1)/2 + topAddOn(i + 1);
+                                if (r % 2 == 0) nextHeight = (r+1) * canva.ActualHeight / slices(i + 1)/2 + topAddOn(i + 1) - canva.ActualHeight / slices(i + 1) / 2 < points.Last().Y ? r * canva.ActualHeight / slices(i + 1)/2 +
+                                                canva.ActualHeight / slices(i + 1) + topAddOn(i + 1) : (r+1) * canva.ActualHeight / slices(i + 1)/2 + topAddOn(i + 1)/2;
                                 else nextHeight = points.Last().Y;
                                 isfound = true;
                                 break;
