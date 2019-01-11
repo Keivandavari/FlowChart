@@ -29,7 +29,7 @@ namespace WpfApp1
     public partial class MainWindow : Window
     {
         Flowchart fc = new Flowchart();
-        int colorCounter = 0;
+        int colorCounter = 0,strokeThickness=1;
         protected internal double MaxAvailableHeight { get; private set; }
         protected internal double MaxAvailableWidth { get; private set; }
         public MainWindow()
@@ -179,6 +179,7 @@ namespace WpfApp1
 
         private void Drawlines(int j, int k, int x, int y, int z, int stacks)
         {
+            strokeThickness = 1;
             //colorCounter++;
             //List<KnownColor> colors = Enum.GetValues(typeof(KnownColor))
                                       //.Cast<KnownColor>()
@@ -186,9 +187,19 @@ namespace WpfApp1
             //Color color = new Color();
             //color = Color.FromName(colors[colorCounter].ToString());
             Random rand = new Random();
-            int distance = y - j,numOfInputs=0,originalNumOfInputs=0;
+            int distance = y - j,numOfInputs=0,originalNumOfInputs=0,temp1;
             double nextHeight = 0;
             List<Point> points = new List<Point>();
+            if (distance < 0)
+            {
+                temp1 = y;
+                y = j;
+                j = temp1;
+                temp1 = z;
+                z = k;
+                k = temp1;
+                strokeThickness = 4;
+            }
             //points.Add(new Point((canva.ActualWidth / stacks) * (j) + (canva.ActualWidth / stacks) / 8,
             //(canva.ActualHeight / slices(j)) * (k) + topAddOn(j) +(canva.ActualWidth / stacks)/4+ (canva.ActualHeight / slices(j)) / 2 * x / (fc.chart[j][k].Count)));
             points.Add(new Point((canva.ActualWidth / stacks) * (j) + (canva.ActualWidth / stacks)*2/5,
@@ -197,9 +208,8 @@ namespace WpfApp1
                      (canva.ActualHeight / slices(j)) * (k) + topAddOn(j) + (canva.ActualHeight / slices(j)) / 2 * x / (fc.chart[j][k].Count)));
             points.Add(new Point((canva.ActualWidth / stacks) * (j) + (canva.ActualWidth / stacks) / 2,
          (canva.ActualHeight / slices(j)) * (k) + topAddOn(j) + (canva.ActualHeight / slices(j)) / 2 * x / fc.chart[j][k].Count));
-            if (distance > 0)
-            {
-
+                
+                
                 for (int i = j; i < y; i++)
                 {
                     if (i > j) colorCounter--;
@@ -295,7 +305,7 @@ namespace WpfApp1
                     points.Add(temp);
                     points.Add(sec);
                 }
-            }
+            
         }
 
         private void MakeCubicCurve(Point[] points)
@@ -310,6 +320,7 @@ namespace WpfApp1
             Path p = new Path();
             p.Data = pge;
             p.Stroke = (SolidColorBrush)(new BrushConverter().ConvertFrom(Helpers.indexcolors[++colorCounter]));
+            p.StrokeThickness = strokeThickness;
             canva.Children.Add(p);
         }
 
