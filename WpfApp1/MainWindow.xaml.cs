@@ -29,7 +29,6 @@ namespace WpfApp1
     public partial class MainWindow : Window
     {
         Flowchart fc = new Flowchart();
-        double topaddOn, topaddOnEnd;
         int colorCounter = 0;
         protected internal double MaxAvailableHeight { get; private set; }
         protected internal double MaxAvailableWidth { get; private set; }
@@ -62,7 +61,6 @@ namespace WpfApp1
                 for (int k = 0; k < fc.chart[j].Count; k++)
                 {
                     DrawElements(j, k, numberofSlices, numberofStacks,i);
-
                 }
             }
         }
@@ -86,15 +84,6 @@ namespace WpfApp1
 
             Rectangle rect = new System.Windows.Shapes.Rectangle();
             Ellipse ellipse = new Ellipse();
-            if (fc.chart[j].Count <= 5)
-            {
-                topaddOn = (5 / 2) * (canva.ActualHeight / 5) - ((fc.chart[j].Count) / 2 - 1 / 4) * (canva.ActualHeight / 5);
-            }
-            else
-            {
-                topaddOn = 0;
-            }
-            
 
             if (j % 2 == 0)
             {
@@ -137,6 +126,7 @@ namespace WpfApp1
             canva.Children.Add(textBlock);
             textBlock.Margin = new Thickness((canva.ActualWidth / stacks) * (j) + (canva.ActualWidth / stacks) / 5 - textBlock.ActualWidth, (canva.ActualHeight / slices1) * (k) + (canva.ActualHeight / slices1) / 6 + topAddOn(j), 0, 0);
             
+            ///lines
             int z=0,y = 0;
             for (int x = 1; x <= fc.chart[j][k].Count - 1; x++)
             {
@@ -148,32 +138,13 @@ namespace WpfApp1
                         if (fc.chart[y][z][0].Equals(fc.chart[j][k][x]))
                         {
                             isFound = true;
-                            if (fc.chart[y].Count <= 5)
-                            {
-                                topaddOnEnd = (5 / 2) * (canva.ActualHeight / 5) - ((fc.chart[y].Count) / 2 - 1 / 4) * (canva.ActualHeight / 5);
-                            }
-                            else
-                            {
-                                topaddOnEnd = 0;
-                            }
                             break;
                         }
                     }
                     if (isFound) break;
 
                 }
-
                 Drawlines(j, k,x, y, z, stacks);
-                //var line = new Line()
-                //{
-                //    X1 = (canva.ActualWidth / stacks) * (j) + (canva.ActualWidth / stacks) / 2,
-                //    Y1 = (canva.ActualHeight / slices(j)) * (k) + topaddOn + (canva.ActualHeight / slices(j)) / 4,
-                //    X2 = (canva.ActualWidth / stacks) * ((y)),
-                //    Y2 = (canva.ActualHeight / slices(y)) * (z) + topaddOnEnd + (canva.ActualHeight / slices(y)) / 4,
-                //    Stroke = Brushes.Black,
-                //    StrokeThickness = 1
-                //};
-                //canva.Children.Add(line);
 
             }
         }
@@ -185,13 +156,9 @@ namespace WpfApp1
                                       .Cast<KnownColor>()
                                       .ToList();
             Color color = new Color();
-            Random rand = new Random();
             color = Color.FromName(colors[colorCounter].ToString());
-
-            
-            //Color color = Color.FromArgb(Convert.ToByte(rand.Next(256)), Convert.ToByte(rand.Next(256)),
-            //                Convert.ToByte(rand.Next(256)), Convert.ToByte(rand.Next(256)));
-            int distance = y - j;
+            Random rand = new Random();
+            int distance = y - j,numOfInputs=0,originalNumOfInputs=0;
             double nextHeight = 0;
             List<Point> points = new List<Point>();
             points.Add(new Point((canva.ActualWidth / stacks) * (j) + (canva.ActualWidth / stacks) / 2,
@@ -216,27 +183,34 @@ namespace WpfApp1
                                 }
                                 L.Add(fc.chart[y][z][0]);
                             }
-                            int numOfInputs = L.Count - 1 == 1 ? 2 : L.Count - 1;
+                            originalNumOfInputs = L.Count;
+                            numOfInputs = L.Count;
                             int cIndex = L.IndexOf(fc.chart[j][k][0]);
-                            nextHeight = (canva.ActualHeight / slices(y)) * (z) + topaddOnEnd + (canva.ActualHeight / slices(y)) * cIndex / (numOfInputs - 1) / 2;
+                            if (numOfInputs == 1) nextHeight = (canva.ActualHeight / slices(y)) * (z) + topAddOn(y) + (canva.ActualHeight / slices(y)) / 2;
+                            else nextHeight = (canva.ActualHeight / slices(y)) * (z) + topAddOn(y) + (canva.ActualHeight / slices(y)) * cIndex / (numOfInputs - 1) / 2;
                         }
                         else
                         {
-                            int numOfInputs = fc.allFuncs.FirstOrDefault(s => s.Contains(fc.chart[y][z][0])).Count - 2 == 1 ? 2 : fc.allFuncs.FirstOrDefault(s => s.Contains(fc.chart[y][z][0])).Count - 2;
+                            originalNumOfInputs = fc.allFuncs.FirstOrDefault(s => s.Contains(fc.chart[y][z][0])).Count;
+                            numOfInputs = fc.allFuncs.FirstOrDefault(s => s.Contains(fc.chart[y][z][0])).Count - 2;
                             int cIndex = fc.allFuncs.FirstOrDefault(s => s.Contains(fc.chart[y][z][0])).IndexOf(fc.chart[j][k][0]);
-                            nextHeight = (canva.ActualHeight / slices(y)) * (z) + topaddOnEnd + (canva.ActualHeight / slices(y)) * cIndex / (numOfInputs - 1) / 2;
+                            if (numOfInputs == 1) nextHeight = (canva.ActualHeight / slices(y)) * (z) + topAddOn(y) + (canva.ActualHeight / slices(y)) / 2;
+                            else nextHeight = (canva.ActualHeight / slices(y)) * (z) + topAddOn(y) + (canva.ActualHeight / slices(y)) * cIndex / (numOfInputs - 1) / 2;
 
                         }
-                        points.Add(new Point(points[1].X + canva.ActualHeight / slices(y) / 2 / (slices(y) + 1) * (z + 1),
+                        points.Add(new Point(points[1].X + canva.ActualHeight / slices(y)/2 - canva.ActualHeight / slices(y) / 2 / (slices(y) + 1) * (z),
                         points[1].Y));
                         points.Add(new Point(points[2].X,
                         nextHeight));
                         points.Add(new Point((canva.ActualWidth / stacks) * ((y)) - (canva.ActualWidth / stacks) / 10,
                         nextHeight));
-                        points.Add(new Point((canva.ActualWidth / stacks) * ((y)) - (canva.ActualWidth / stacks) / 10,
-                        (canva.ActualHeight / slices(y)) * (z) + topaddOnEnd + (canva.ActualHeight / slices(y)) / 4));
-                        points.Add(new Point((canva.ActualWidth / stacks) * ((y)),
-                        (canva.ActualHeight / slices(y)) * (z) + topaddOnEnd + (canva.ActualHeight / slices(y)) / 4));
+                        if (originalNumOfInputs != 1)
+                        {
+                            points.Add(new Point((canva.ActualWidth / stacks) * ((y)) - (canva.ActualWidth / stacks) / 40,
+                            (canva.ActualHeight / slices(y)) * (z) + topAddOn(y) + (canva.ActualHeight / slices(y)) / 4));
+                            points.Add(new Point((canva.ActualWidth / stacks) * ((y)),
+                            (canva.ActualHeight / slices(y)) * (z) + topAddOn(y) + (canva.ActualHeight / slices(y)) / 4));
+                        }
                     }
                     else
                     {
@@ -261,20 +235,30 @@ namespace WpfApp1
                         nextHeight));
                     }
                     System.Windows.Media.Color color1 = System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
-                    for (int v = 0; v < points.Count - 1; v++)
-                    {
+                    ////var b = GetBezierApproximation(points.ToArray(), 256);
+                    PathFigure pf = new PathFigure(b.Points[0], new[] { b }, false);
+                    PathFigureCollection pfc = new PathFigureCollection();
+                    pfc.Add(pf);
+                    var pge = new PathGeometry();
+                    pge.Figures = pfc;
+                    Path p = new Path();
+                    p.Data = pge;
+                    p.Stroke = new SolidColorBrush(System.Windows.Media.Color.FromRgb(255, 0, 0));
+                    canva.Children.Add(p);
+                    //for (int v = 0; v < points.Count - 1; v++)
+                    //{
 
-                        var line = new Line()
-                        {
-                            X1 = points[v].X,
-                            Y1 = points[v].Y,
-                            X2 = points[v + 1].X,
-                            Y2 = points[v + 1].Y,
-                            Stroke = Brushes.Black,
-                            StrokeThickness = 1
-                        };
-                        canva.Children.Add(line);
-                    }
+                    //    var line = new Line()
+                    //    {
+                    //        X1 = points[v].X,
+                    //        Y1 = points[v].Y,
+                    //        X2 = points[v + 1].X,
+                    //        Y2 = points[v + 1].Y,
+                    //        Stroke = Brushes.Black,
+                    //        StrokeThickness = 1
+                    //    };
+                    //    canva.Children.Add(line);
+                    //}
                     var temp = points.Last();
                     var sec = new Point(points.Last().X + (canva.ActualWidth / stacks) * 1 / 4, points.Last().Y);
                     points.Clear();
@@ -283,6 +267,31 @@ namespace WpfApp1
                 }
             }
         }
+
+
+        PolyLineSegment GetBezierApproximation(Point[] controlPoints, int outputSegmentCount)
+        {
+            Point[] points = new Point[outputSegmentCount + 1];
+            for (int i = 0; i <= outputSegmentCount; i++)
+            {
+                double t = (double)i / outputSegmentCount;
+                points[i] = GetBezierPoint(t, controlPoints, 0, controlPoints.Length);
+            }
+            return new PolyLineSegment(points, true);
+        }
+
+        Point GetBezierPoint(double t, Point[] controlPoints, int index, int count)
+        {
+            if (count == 1)
+                return controlPoints[index];
+            var P0 = GetBezierPoint(t, controlPoints, index, count - 1);
+            var P1 = GetBezierPoint(t, controlPoints, index + 1, count - 1);
+            return new Point((1 - t) * P0.X + t * P1.X, (1 - t) * P0.Y + t * P1.Y);
+        }
+
+
+
+
         private void In_Focused(object sender, RoutedEventArgs e)
         {
             inputsT.SelectAll();
