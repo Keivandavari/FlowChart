@@ -48,7 +48,7 @@ namespace WpfApp1
             {
                 if(input[r].Equals(output))
                 {
-                    Warning = "Inputs and output have duplicates!";
+                    Warning = "Inputs and output have duplicate!";
                     return;
                 }
             }
@@ -58,7 +58,7 @@ namespace WpfApp1
                 {
                     if (input[r].Equals(input[s]) && r!=s)
                     {
-                        Warning = "Inputs have duplicates!";
+                        Warning = "Inputs have duplicate(s)!";
                         return;
                     }
                 }
@@ -82,9 +82,8 @@ namespace WpfApp1
             adjustements.Add(1);
             int currentStackNumber = 0;
             int maxStackNumber = 0;
+            int cntr = 0;
             bool firstTimeFound = false;
-            if (!functions.Contains(fName))
-            {
                 Warning = "";
                 functions.Add(fName);
                 if (!outputs.Contains(output)) outputs.Add(output);
@@ -102,8 +101,8 @@ namespace WpfApp1
                     bool isFound = false;
                     if (i == function.Count - 1)
                     {
-                        chart[maxStackNumber + 1].Add(new List<string>() { function.Last(), function[function.Count -2] });
-                        if (!firstTimeFound)
+                       chart[maxStackNumber + 1].Add(new List<string>() { function.Last(), function[function.Count -2], });
+                       if (!firstTimeFound)
                         {
                             for (int l = 0; l < i; l++)
                             {
@@ -111,7 +110,6 @@ namespace WpfApp1
                                 else chart[currentStackNumber + Convert.ToInt32(adjustements[l])].Add(new List<string>() { function[l], function.Last() });
                             }
                         }
-                        continue;
                     }   
                     for (int j = 0; j < chart.Count; j+=2)
                     { 
@@ -146,15 +144,11 @@ namespace WpfApp1
                     if (!isFound && !firstTimeFound) continue;
                     else if (!isFound && firstTimeFound)
                     {
-                        if (i <= function.Count - 3) chart[currentStackNumber].Add(new List<string>() { function[i], function.Last() });
-                        else if (i == function.Count - 2) chart[currentStackNumber + 2].Add(new List<string>() { function[i] });
+                        if (i <= function.Count - 3) chart[maxStackNumber].Add(new List<string>() { function[i], function.Last() });
+                        else if (i == function.Count - 2) chart[maxStackNumber + 2].Add(new List<string>() { function[i] });
                     }
                 }
-            }
-            else
-            {
-                Warning = "This Function is Already Exist!";
-            }
+            
         }
         private string _warning;
         public string Warning

@@ -145,24 +145,34 @@ namespace WpfApp1
             textBlock.Margin = new Thickness((canva.ActualWidth / stacks) * (j) + (canva.ActualWidth / stacks) / 5 - textBlock.ActualWidth, (canva.ActualHeight / slices1) * (k) + (canva.ActualHeight / slices1) / 6 + topAddOn(j), 0, 0);
             
             ///lines
-            int z=0,y = 0;
+            int z=0,y = 0,t;
             for (int x = 1; x <= fc.chart[j][k].Count - 1; x++)
             {
-                for (y = 0; y <= numofcolumns; y++)
+                bool alreadyDone = false;
+                for (t = 0; t < x; t++)
                 {
-                    bool isFound = false;
-                    for (z = 0; z <= fc.chart[y].Count - 1; z++)
+                    if (fc.chart[j][k][t].Equals(fc.chart[j][k][x]))
                     {
-                        if (fc.chart[y][z][0].Equals(fc.chart[j][k][x]))
-                        {
-                            isFound = true;
-                            break;
-                        }
+                        alreadyDone = true;
+                        break;
                     }
-                    if (isFound) break;
-
                 }
-                Drawlines(j, k,x, y, z, stacks);
+                if (!alreadyDone)
+                {
+                    for (y = 0; y <= numofcolumns; y++)
+                    {
+                        for (z = 0; z <= fc.chart[y].Count - 1; z++)
+                        {
+                                if (fc.chart[y][z][0].Equals(fc.chart[j][k][x]))
+                                {
+
+                                    Drawlines(j, k, x, y, z, stacks);
+                                }
+                        }
+
+                    }
+                }
+                //Drawlines(j, k,x, y, z, stacks);
 
             }
         }
@@ -243,12 +253,13 @@ namespace WpfApp1
                     else
                     {
                         bool isfound = false;
-                        for (int r = 0; r < fc.chart[i + 1].Count; r++)
+                        for (int r = 0; r < 2*fc.chart[i + 1].Count; r++)
                         {
-                            if (points.Last().Y < (r + 1) * canva.ActualHeight / slices(i + 1) + topAddOn(i + 1))
+                            if (points.Last().Y < (r+1) *(canva.ActualHeight / slices(i + 1))/2 + topAddOn(i + 1))
                             {
-                                nextHeight = r * canva.ActualHeight / slices(i + 1) -
-                                           canva.ActualHeight / slices(i + 1) / 5 + topAddOn(i + 1);
+                                if (r % 2 == 0) nextHeight = (r+1) * canva.ActualHeight / slices(i + 1)/2 + topAddOn(i + 1) - canva.ActualHeight / slices(i + 1) / 2 < points.Last().Y ? r * canva.ActualHeight / slices(i + 1) +
+                                                canva.ActualHeight / slices(i + 1) + topAddOn(i + 1) : (r+1) * canva.ActualHeight / slices(i + 1)/2 + topAddOn(i + 1);
+                                else nextHeight = points.Last().Y;
                                 isfound = true;
                                 break;
                             }
