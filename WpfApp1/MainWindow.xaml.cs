@@ -109,7 +109,8 @@ namespace WpfApp1
             textBlock.Margin = new Thickness((canva.ActualWidth / stacks) * (j) + (canva.ActualWidth / stacks) / 5 - textBlock.ActualWidth, (canva.ActualHeight / slices1) * (k) + (canva.ActualHeight / slices1) / 6 + topAddOn(j), 0, 0);
 
 
-            ///lines
+            /// here we g othrough chart objects to see where objects should be connect to.
+            /// when we find the right object we call drawConnection with correspandant indexes.
             int z = 0, y = 0, t;
             for (int x = 1; x <= fc.chart[j][k].Count - 1; x++)
             {
@@ -130,9 +131,12 @@ namespace WpfApp1
         {
             strokeThickness = 1;
             Random rand = new Random();
-            int distance = y - j,numOfInputs=0,originalNumOfInputs=0,temp1;
+            /// it distance between two columns that has objects should be connected
+            int distance = y - j;
+            int numOfInputs=0,originalNumOfInputs=0,temp1;
             double nextHeight = 0;
             List<Point> points = new List<Point>();
+            //if distance is negative we make it positive and change the strokethickness of the line to 5 to make it difference than others.
             if (distance < 0)
             {
                 temp1 = y;
@@ -143,8 +147,8 @@ namespace WpfApp1
                 k = temp1;
                 strokeThickness = 4;
             }
-            //points.Add(new Point((canva.ActualWidth / stacks) * (j) + (canva.ActualWidth / stacks) / 8,
-            //(canva.ActualHeight / slices(j)) * (k) + topAddOn(j) +(canva.ActualWidth / stacks)/4+ (canva.ActualHeight / slices(j)) / 2 * x / (fc.chart[j][k].Count)));
+            /// Here is the first point of the connetion
+            /// they added based on the position of each objects
             points.Add(new Point((canva.ActualWidth / stacks) * (j) + (canva.ActualWidth / stacks)*2/5,
                      (canva.ActualHeight / slices(j)) * (k) + topAddOn(j) + (canva.ActualHeight / slices(j))/4));
             points.Add(new Point((canva.ActualWidth / stacks) * (j) + (canva.ActualWidth / stacks) / 2,
@@ -154,6 +158,9 @@ namespace WpfApp1
                 for (int i = j; i < y; i++)
                 {
                     if (i > j) colorCounter--;
+
+                    /// this when happend when we start to draw we get to the ONE column befor the last column
+                    /// we act different here all previous columns we needed to pass them but this one we need to get connected to the end line of the connection
                     if (i == y - 1)
                     {
                         if (y % 2 == 0)
@@ -201,6 +208,9 @@ namespace WpfApp1
                         //    (canva.ActualHeight / slices(y)) * (z) + topAddOn(y) + (canva.ActualHeight / slices(y))/4));
 
                     }
+
+                    // here is when we are passing through columns unless we get the last one.
+                    // we nextHeight parameter here which is the safe height that we can go through between items.
                     else
                     {
                         bool isfound = false;
@@ -223,22 +233,12 @@ namespace WpfApp1
                         points.Add(new Point(points[3].X + (canva.ActualWidth / stacks) * 1 / 2,
                         nextHeight));
                     }
-                    //System.Windows.Media.Color color1 = System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
-                    MakeCubicCurve(points.ToArray());
-                //for (int v = 0; v < points.Count - 1; v++)
-                //{
-
-                //    var line = new Line()
-                //    {
-                //        X1 = points[v].X,
-                //        Y1 = points[v].Y,
-                //        X2 = points[v + 1].X,
-                //Y2 = points[v + 1].Y,
-                //        Stroke = Brushes.Black,
-                //        StrokeThickness = 1
-                //    };
-                //    canva.Children.Add(line);
-                //}
+                // We have made a lists of points we want to pass through 
+                // now it is time to call the MakeCubicCurve with the points.
+                MakeCubicCurve(points.ToArray());
+                //Last point of each step should be first one of the next one so here at the end.
+                // we insert the last one to the new list and do the process again for the next column
+                // also we know what is the second point would be so add it here.
                 var first = points.Last();
                 var second = new Point(points.Last().X + (canva.ActualWidth / stacks) * 1 / 4, points.Last().Y);
                     points.Clear();
