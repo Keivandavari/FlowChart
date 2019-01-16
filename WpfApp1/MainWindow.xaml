@@ -15,20 +15,20 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="350*"/>
+            <RowDefinition Height="359*"/>
             <RowDefinition Height="24*"/>
-            <RowDefinition Height="45*"/>
+            <RowDefinition Height="67*"/>
         </Grid.RowDefinitions>
-        <Button Content="close" Grid.Row="0" Grid.Column="3" HorizontalAlignment="Right" VerticalAlignment="Top" Click="Close_Clicked"/>
-        <TextBlock Text="Comma Sperated Inputs: " Grid.Column="0" Foreground="White" VerticalAlignment="Center" FontSize="16" FontWeight="Thin" HorizontalAlignment="Left" Margin="10,0,0,2" Height="22" Grid.Row="1" Width="178"/>
-        <TextBox x:Name="inputsT" HorizontalAlignment="Stretch" Grid.Row="2" TextWrapping="Wrap" Text="" GotFocus="In_Focused" Margin="10,0" Background="#FF212121" BorderBrush="{x:Null}" FontSize="36" FontWeight="Light" Foreground="#FF73E04B" CharacterCasing="Upper"/>
-        <TextBlock Text="  Output: " Grid.Column="1" Grid.Row="1" FontSize="16" FontWeight="Thin" VerticalAlignment="Center" Margin="63,0,71,2" HorizontalAlignment="Center" Foreground="White" Width="64" Height="22"/>
+        <Button Content="close" Grid.Row="0" Grid.Column="3" HorizontalAlignment="Right" VerticalAlignment="Top" Click="Close_Clicked" Height="20" Width="31"/>
+        <TextBlock Text="Comma Sperated Inputs: " Grid.Column="0" Foreground="White" VerticalAlignment="Center" FontSize="16" FontWeight="Thin" HorizontalAlignment="Left" Margin="10,3,0,66" Height="22" Grid.Row="1" Width="178" Grid.RowSpan="2"/>
+        <TextBox x:Name="inputsT" HorizontalAlignment="Stretch" Grid.Row="2" TextWrapping="Wrap" Text="" GotFocus="In_Focused" Margin="10,0,80,32" Background="#FF212121" BorderBrush="{x:Null}" FontSize="36" FontWeight="Light" Foreground="#FF73E04B" CharacterCasing="Upper"/>
+        <TextBlock Text="  Output: " Grid.Column="1" Grid.Row="1" FontSize="16" FontWeight="Thin" VerticalAlignment="Center" Margin="64,3,72,66" HorizontalAlignment="Center" Foreground="White" Width="64" Height="22" Grid.RowSpan="2"/>
         <TextBox x:Name="outputT" HorizontalAlignment="Stretch" Grid.Row="2" Grid.Column="1" TextWrapping="Wrap" Margin="10,0" Background="#FF212121" BorderBrush="{x:Null}" Foreground="#FF73E04B" FontSize="32" FontWeight="Light" CharacterCasing="Upper" />
-        <TextBlock Text=" Function Name:" Grid.Column="2" Grid.Row="1" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="33,0,44,2" FontSize="16" Width="121" FontWeight="Thin" Height="22"/>
+        <TextBlock Text=" Function Name:" Grid.Column="2" Grid.Row="1" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="34,3,45,66" FontSize="16" Width="121" FontWeight="Thin" Height="22" Grid.RowSpan="2"/>
         <TextBox x:Name="fT" Text="F1" HorizontalAlignment="Stretch" Grid.Row="2" TextWrapping="Wrap" Grid.Column="2" Margin="10,0" Background="#FF212121" BorderBrush="{x:Null}" Foreground="#FF73E04B" FontSize="32" FontWeight="Light"/>
         <Button Content="Add" Grid.Column="3" HorizontalAlignment="Left" Grid.Row="1" Click="Add_Clicked" Margin="10,0,0,0" FontSize="32" FontWeight="Light" Background="{x:Null}" Foreground="White" BorderBrush="{x:Null}" Grid.RowSpan="2" Width="178"/>
-        <TextBlock Text="{Binding Path=Warning, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" x:Name="WarningBlock" Foreground="Red" FontWeight="Light" VerticalAlignment="Bottom" HorizontalAlignment="Center" Grid.ColumnSpan="2" Grid.Column="1" FontSize="16"/>
-        <Grid Margin="10" x:Name="diagram" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4">
+        <TextBlock Text="{Binding Path=Warning, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" x:Name="WarningBlock" Foreground="Red" FontWeight="Light" VerticalAlignment="Bottom" HorizontalAlignment="Center" Grid.Column="2" FontSize="16" Height="21" Margin="0,0,200,0" Width="0"/>
+        <Grid Margin="10,10,10,0" x:Name="diagram" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4">
             <Canvas HorizontalAlignment="Stretch" VerticalAlignment="Stretch" x:Name="canva">
             </Canvas>
         </Grid>

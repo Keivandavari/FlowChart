@@ -41,8 +41,10 @@ namespace WpfApp1
         private void Add_Clicked(object sender, RoutedEventArgs e)
         {
             int n = 0;
+            // This is the Max Width and Height of the Chart UI canva is the Canvas that we Drawing the flowchart on it.
             MaxAvailableHeight = canva.ActualHeight;
             MaxAvailableWidth = canva.ActualWidth;
+            // Send the User's Inputs To our FlowChart class for insertation.
             fc.Add(inputsT.Text.Split(',').ToList().Select(t => t.Trim()).ToList(), outputT.Text, fT.Text);
             Draw();
         }
@@ -52,10 +54,12 @@ namespace WpfApp1
             colorCounter = 0;
             canva.Children.Clear();
             int i = 0;
+            //Find the Exact number of our columns or stacks in the our fc.chart.
             for (i = 0; i < fc.chart.Count; i++)
             {
                 if (fc.chart[i].Count == 0) break;
             }
+            // If number of  stacks bigger than 7 then we devide the page to i otherwise we devide to 7.
             int numberofStacks = i > 7 ? i : 7;
             for (int j = 0; j < i; j++)
             {
@@ -66,6 +70,8 @@ namespace WpfApp1
                 }
             }
         }
+        // for stacks that have less than 5 objects for better visualization we add some height to their objects.
+        // we try to keep objects at the center.
         private double topAddOn(int i)
         {
             if (fc.chart[i].Count <= 5)
@@ -77,65 +83,23 @@ namespace WpfApp1
                 return 0;
             }
         }
+        // deviding columns to some slices to find coordinate of each object easier.
         private double slices(int i)
         {
             return fc.chart[i].Count > 5 ? fc.chart[i].Count : 5;
         }
+
+        // Drawing Process starts from here
         private void DrawElements(int j, int k, int slices1, int stacks, int numofcolumns)
         {
-
-            Rectangle rect = new System.Windows.Shapes.Rectangle();
-            Ellipse ellipse = new Ellipse();
-  
-
-            if (j % 2 == 0)
-            {
-                //List<Point> points = new List<Point>();
-                //points.Add(new Point((canva.ActualWidth / stacks) * (j) + (canva.ActualWidth / stacks) / 4,
-                //                     (canva.ActualHeight / slices1) * (k) + topAddOn(j)));
-                //points.Add(new Point((canva.ActualWidth / stacks) * (j),
-                //                     (canva.ActualHeight / slices1) * (k) + topAddOn(j) + (canva.ActualHeight / slices1) / 4));
-                //points.Add(new Point((canva.ActualWidth / stacks) * (j) + (canva.ActualWidth / stacks) / 4,
-                //                     (canva.ActualHeight / slices1) * (k) + topAddOn(j) + (canva.ActualHeight / slices1) / 2));
-                //points.Add(new Point((canva.ActualWidth / stacks) * (j) + (canva.ActualWidth / stacks) / 2,
-                //     (canva.ActualHeight / slices1) * (k) + topAddOn(j) + (canva.ActualHeight / slices1) / 4));
-                //MakeCubicCurve(points.ToArray());
-                rect = new Rectangle()
-                {
-                    Name = fc.chart[j][k][0].ToString(),
-                    Width = (canva.ActualWidth / stacks) / 2,
-                    Height = (canva.ActualHeight / slices1) / 2,
-                    VerticalAlignment = VerticalAlignment.Top,
-                    HorizontalAlignment = HorizontalAlignment.Left,
-                    Stroke = Brushes.Black,
-                    StrokeThickness = 1,
-                };
-                //canva.Children.Add(rect);
-                //rect.Margin = new Thickness((canva.ActualWidth / stacks) * (j), (canva.ActualHeight / slices1) * (k) + topAddOn(j), 0, 0);
-            }
-            else
-            {
-                ellipse = new Ellipse()
-                {
-                    Name = fc.chart[j][k][fc.chart[j][k].Count - 2].ToString(),
-                    Width = (canva.ActualWidth / stacks) / 2,
-                    Height = (canva.ActualHeight / slices1) / 2,
-                    VerticalAlignment = VerticalAlignment.Top,
-                    HorizontalAlignment = HorizontalAlignment.Left,
-                    Stroke = Brushes.Black,
-                    StrokeThickness = 1,
-                };
-                //canva.Children.Add(ellipse);
-                //ellipse.Margin = new Thickness((canva.ActualWidth / stacks) * (j), (canva.ActualHeight / slices1) * (k) + topAddOn(j), 0, 0);
-            }
-
+            string name = j % 2 == 1 ? fc.chart[j][k][fc.chart[j][k].Count - 2].Split('-')[0].ToString() : fc.chart[j][k][0].Split('-')[0].ToString();
+            //Here is the textblock for showing objects name 
             var textBlock = new TextBlock()
             {
-                Name = j % 2 == 1 ? fc.chart[j][k][fc.chart[j][k].Count - 2].ToString() : fc.chart[j][k][0].ToString() + "tb",
-                Text = j % 2 == 1 ? fc.chart[j][k][fc.chart[j][k].Count - 2].ToString() : fc.chart[j][k][0].ToString(),
+                Text = name,
                 VerticalAlignment = VerticalAlignment.Top,
                 HorizontalAlignment = HorizontalAlignment.Left,
-                Foreground = j%2==0 ? (SolidColorBrush)(new BrushConverter().ConvertFrom("#3E50B4")):
+                Foreground = j % 2 == 0 ? (SolidColorBrush)(new BrushConverter().ConvertFrom("#3E50B4")) :
                                        (SolidColorBrush)(new BrushConverter().ConvertFrom("#FF3F80")),
                 FontFamily = new System.Windows.Media.FontFamily("SegoeUI"),
                 FontWeight = FontWeights.Light,
@@ -143,49 +107,28 @@ namespace WpfApp1
             };
             canva.Children.Add(textBlock);
             textBlock.Margin = new Thickness((canva.ActualWidth / stacks) * (j) + (canva.ActualWidth / stacks) / 5 - textBlock.ActualWidth, (canva.ActualHeight / slices1) * (k) + (canva.ActualHeight / slices1) / 6 + topAddOn(j), 0, 0);
-            
+
+
             ///lines
-            int z=0,y = 0,t;
+            int z = 0, y = 0, t;
             for (int x = 1; x <= fc.chart[j][k].Count - 1; x++)
             {
-                bool alreadyDone = false;
-                for (t = 0; t < x; t++)
+                for (y = 0; y <= numofcolumns; y++)
                 {
-                    if (fc.chart[j][k][t].Equals(fc.chart[j][k][x]))
+                    for (z = 0; z <= fc.chart[y].Count - 1; z++)
                     {
-                        alreadyDone = true;
-                        break;
-                    }
-                }
-                if (!alreadyDone)
-                {
-                    for (y = 0; y <= numofcolumns; y++)
-                    {
-                        for (z = 0; z <= fc.chart[y].Count - 1; z++)
+                        if (fc.chart[y][z][0].Equals(fc.chart[j][k][x]))
                         {
-                                if (fc.chart[y][z][0].Equals(fc.chart[j][k][x]))
-                                {
-
-                                    Drawlines(j, k, x, y, z, stacks);
-                                }
+                            Drawlines(j, k, x, y, z, stacks);
                         }
-
                     }
                 }
-                //Drawlines(j, k,x, y, z, stacks);
-
             }
         }
 
         private void Drawlines(int j, int k, int x, int y, int z, int stacks)
         {
             strokeThickness = 1;
-            //colorCounter++;
-            //List<KnownColor> colors = Enum.GetValues(typeof(KnownColor))
-                                      //.Cast<KnownColor>()
-                                      //.ToList();
-            //Color color = new Color();
-            //color = Color.FromName(colors[colorCounter].ToString());
             Random rand = new Random();
             int distance = y - j,numOfInputs=0,originalNumOfInputs=0,temp1;
             double nextHeight = 0;
@@ -203,13 +146,11 @@ namespace WpfApp1
             //points.Add(new Point((canva.ActualWidth / stacks) * (j) + (canva.ActualWidth / stacks) / 8,
             //(canva.ActualHeight / slices(j)) * (k) + topAddOn(j) +(canva.ActualWidth / stacks)/4+ (canva.ActualHeight / slices(j)) / 2 * x / (fc.chart[j][k].Count)));
             points.Add(new Point((canva.ActualWidth / stacks) * (j) + (canva.ActualWidth / stacks)*2/5,
-                   (canva.ActualHeight / slices(j)) * (k) + topAddOn(j) + (canva.ActualHeight / slices(j))/4));
+                     (canva.ActualHeight / slices(j)) * (k) + topAddOn(j) + (canva.ActualHeight / slices(j))/4));
             points.Add(new Point((canva.ActualWidth / stacks) * (j) + (canva.ActualWidth / stacks) / 2,
                      (canva.ActualHeight / slices(j)) * (k) + topAddOn(j) + (canva.ActualHeight / slices(j)) / 2 * x / (fc.chart[j][k].Count)));
             points.Add(new Point((canva.ActualWidth / stacks) * (j) + (canva.ActualWidth / stacks) / 2,
-         (canva.ActualHeight / slices(j)) * (k) + topAddOn(j) + (canva.ActualHeight / slices(j)) / 2 * x / fc.chart[j][k].Count));
-                
-                
+                     (canva.ActualHeight / slices(j)) * (k) + topAddOn(j) + (canva.ActualHeight / slices(j)) / 2 * x / fc.chart[j][k].Count));
                 for (int i = j; i < y; i++)
                 {
                     if (i > j) colorCounter--;
@@ -220,9 +161,9 @@ namespace WpfApp1
                             List<string> L = new List<string>();
                             foreach (var item in fc.allFuncs)
                             {
-                                if (item.Last().Equals(fc.chart[y][z][0]))
+                                if (item[item.Count -1].Equals(fc.chart[y][z][0]))
                                 {
-                                    L.Add(item[item.Count - 2]);
+                                    L.Add(item[item.Count - 3]);
                                 }
                                 L.Add(fc.chart[y][z][0]);
                             }
@@ -273,7 +214,6 @@ namespace WpfApp1
                                 isfound = true;
                                 break;
                             }
-
                         }
                         if (!isfound) nextHeight = points.Last().Y;
                         points.Add(new Point(points[1].X + (canva.ActualWidth / stacks) * 1 / 4,
@@ -285,25 +225,25 @@ namespace WpfApp1
                     }
                     //System.Windows.Media.Color color1 = System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
                     MakeCubicCurve(points.ToArray());
-                    //for (int v = 0; v < points.Count - 1; v++)
-                    //{
+                //for (int v = 0; v < points.Count - 1; v++)
+                //{
 
-                    //    var line = new Line()
-                    //    {
-                    //        X1 = points[v].X,
-                    //        Y1 = points[v].Y,
-                    //        X2 = points[v + 1].X,
-                    //        Y2 = points[v + 1].Y,
-                    //        Stroke = Brushes.Black,
-                    //        StrokeThickness = 1
-                    //    };
-                    //    canva.Children.Add(line);
-                    //}
-                    var temp = points.Last();
-                    var sec = new Point(points.Last().X + (canva.ActualWidth / stacks) * 1 / 4, points.Last().Y);
+                //    var line = new Line()
+                //    {
+                //        X1 = points[v].X,
+                //        Y1 = points[v].Y,
+                //        X2 = points[v + 1].X,
+                //Y2 = points[v + 1].Y,
+                //        Stroke = Brushes.Black,
+                //        StrokeThickness = 1
+                //    };
+                //    canva.Children.Add(line);
+                //}
+                var first = points.Last();
+                var second = new Point(points.Last().X + (canva.ActualWidth / stacks) * 1 / 4, points.Last().Y);
                     points.Clear();
-                    points.Add(temp);
-                    points.Add(sec);
+                    points.Add(first);
+                    points.Add(second);
                 }
             
         }
