@@ -54,12 +54,13 @@ namespace WpfApp1
         //  which means we start from one object and after some steps we got back to the same point.
         /// </summary>
         /// <param name="checkList"></param>
-        /// At the first time this list has only one object which is CurrentUserOutput
+        /// In first call this list has only one object which is CurrentUserOutput
         /// <param name="CurrentUserOutput"></param>
+        /// We need to compare outputs of each steps with this parameter so we pass it next to our new Checklist in each recursive step.
         /// <returns></returns>
         private bool isCycle(List<string> checkList,string CurrentUserOutput)
         {
-            // if the chart does not have any cycle. Eventually we will get to the point that our new input list does not
+            // If the chart does not have any cycle. Eventually we will get to the point that our new input list does not
             // have any output which means we get to the end of flowchart. So if we get to this point we can say 
             // the flowchart will not have cycle if we insert the user entries to the chart.
             if (!checkList.Any()) { return false; }
