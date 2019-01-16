@@ -11,20 +11,17 @@ using System.Threading.Tasks;
 namespace WpfApp1
 {
     //***************** Flow Chart Class*************
-    // The chart is a List<List<List<T>>>.
-    // The First List is for columns which contains objects for each column in the diagram
-    // The Second inside list is the list that contains Objects for each column.
-    // The last list contains object name as its first element and all objects are connect to 
-    // the first element.
-    // for better picture here is the example of the chart is look like (Same example as the Home Project)
-
-
+    // Chart: List<List<List<T>>>.
+    // First List: Columns.
+    // Second List: Slices (Objects in each columns)
+    // Third: Object name and connected objects.
+    // example:
+    //
     // A,F1   F1,C   C,F4     F4,W   W
     // B,F1   F2,D   D,F4,F3  F3,H   H
     // E,F2          R,F3
     // G,F2
     // T,F2
-
     //*************************************************
     public class Flowchart :INotifyPropertyChanged
     {
@@ -35,45 +32,57 @@ namespace WpfApp1
         List<List<string>> inputs = new List<List<string>>();
         //*************************************************
 
-        //This is the list we keep all our Entries into it. 
+        //This is the list we keep all our Entries into it.
+        // Order of each object is, Inputs-Function Name-Output
+        // Example A,B,C,D,E,F1,G
         public List<List<string>> allFuncs = new List<List<string>>();
         // Class Constructor.
         public Flowchart() {
             _chart = new List<List<List<string>>>();
         }
 
-        // Finding if the Flowchart has Cycle in it or not.
-        // This function is using this fact that the current chart we have does not have
-        // Cycle so we just need to check the output that user just entered.
-        // so give the entry to the chart and we got some outputs
-        // then again we give these new outputs as new inputs to the chart
-        // we continue this process recursively unless we find  
-        // any of our outputs is the same with the current user output.
-        // which means we start from one object and after some steps we got back to the same point.
-        private bool isCycle(List<string> inputs,string firstInput)
+
+        /// <summary>
+        /// Finding if the Flowchart has Cycle in it or not.
+        /// 
+        /// This function is using this fact that the current chart does not have
+        /// Cycle by now. So we just need to add user entries to the chart and check if the new chart has any cycle or not.
+        /// We give the "current user Entry for output" to the this function and we got some outputs
+        /// then again we give these new outputs as new inputs to the function to get some new outputs.
+        //  we continue this process recursively unless we find
+        //  any of our outputs is same with the "current user Entry for output".
+        //  which means we start from one object and after some steps we got back to the same point.
+        /// </summary>
+        /// <param name="checkList"></param>
+        /// At the first time this list has only one object which is CurrentUserOutput
+        /// <param name="CurrentUserOutput"></param>
+        /// <returns></returns>
+        private bool isCycle(List<string> checkList,string CurrentUserOutput)
         {
             // if the chart does not have any cycle. Eventually we will get to the point that our new input list does not
             // have any output which means we get to the end of flowchart. So if we get to this point we can say 
-            // the flowchart will not have cycle if we add the user entries.
-            if (!inputs.Any()) { return false; }
+            // the flowchart will not have cycle if we insert the user entries to the chart.
+            if (!checkList.Any()) { return false; }
             else
             {
-                List<string> vs = new List<string>();
-                for (int i = 0; i <= inputs.Count - 1; i++)
+                // it is gonna be the output of the current function and input of the next function (recursive).
+                List<string> iO = new List<string>();
+                // for items in input
+                for (int i = 0; i <= checkList.Count - 1; i++)
                 {
-                    foreach (var item in allFuncs.Where(s => s.Contains(inputs[i])))
+                    foreach (var item in allFuncs.Where(s => s.Contains(checkList[i])))
                     {
-                        if (!item.Last().Equals(inputs[i]))
-                             vs.Add(item.Last());
+                        if (!item.Last().Equals(checkList[i]))
+                             iO.Add(item.Last());
                     }
                 }
                 // check if any of our outputs are the same with our first entry.
-                if (vs.Contains(firstInput))
+                if (iO.Contains(CurrentUserOutput))
                 {
                     return true;
                 }
                 // if the code get here it returns itself to repeat the process.
-                return isCycle(vs, firstInput);
+                return isCycle(iO, CurrentUserOutput);
             }
         }
 
@@ -154,7 +163,7 @@ namespace WpfApp1
                     fName,
                     serialNumber
             };
-            //Starting of Insertation into the chart.
+            //Starting the insertion process.
             for (int i = 0; i <= function.Count-2;i++)
                 {
                     chart.Add(new List<List<string>>());
@@ -182,11 +191,11 @@ namespace WpfApp1
                     { 
                         for(int k=0; k <= chart[j].Count -1; k++)
                         {
-                            // When we find the entries in out current chart.
+                            // When we find the entries in our current chart.
                             if (chart[j][k][0].Equals(function[i])){
                                //if the object we have found is not the output, we just add its correspandant
                                // function name into its list. for example user has A in his new Entry
-                               // and have found A in 2nd column. A,F1,F2. It means A is connected to F1 and
+                               // and we have found A in 2nd column. A,F1,F2. It means A is connected to F1 and
                                // F2 by now. Now we want to insert our new A and its function name is F5 so the
                                // List is like A F1 F2 F5
                                 if(i!=function.Count-3 ) chart[j][k].Add(function.Last());
@@ -244,7 +253,6 @@ namespace WpfApp1
                     else if (i == function.Count - 3) chart[maxStackNumber + 2].Add(new List<string>() { function[i] });
                 }
                 }
-            
         }
         // This is the Warning Property
         private string _warning;
