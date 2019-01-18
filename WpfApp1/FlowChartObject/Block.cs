@@ -8,12 +8,12 @@ namespace WpfApp1
 {
     public class Block : ChartBaseObject
     {
-        private List<Object> _inputs;
-        public List<Object> Inputs
+        private List<object> _inputs;
+        public List<object> Inputs
         {
             get
             {
-                if (_inputs == null) return new List<Object>();
+                if (_inputs == null) return new List<object>();
                 else return _inputs;
             }
             set
@@ -21,9 +21,6 @@ namespace WpfApp1
                 _inputs = value;
             }
         }
-        public Object Output { get; set; }
-        
-        // Other Function Class Objects
-        // ****
+        public object Output { get; set; }
     }
 }

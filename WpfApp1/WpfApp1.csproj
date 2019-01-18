@@ -68,7 +68,6 @@
     <Compile Include="Flowchart.cs" />
     <Compile Include="FlowChartObject\Block.cs" />
     <Compile Include="Helpers.cs" />
-    <Compile Include="FlowChartObject\Object.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

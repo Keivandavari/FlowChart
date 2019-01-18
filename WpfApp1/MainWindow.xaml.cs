@@ -105,7 +105,7 @@ namespace WpfApp1
                 FontSize = 24,
             };
             canva.Children.Add(textBlock);
-            textBlock.Margin = new Thickness((canva.ActualWidth / numberofStacks) * (j), (canva.ActualHeight / numberofSlices) * (k) + topAddOn(j), 0, 0);
+            textBlock.Margin = new Thickness((canva.ActualWidth / numberofStacks) * (j) + (canva.ActualWidth / numberofStacks)/5, (canva.ActualHeight / numberofSlices) * (k) + (canva.ActualWidth / numberofStacks) / 11 + topAddOn(j), 0, 0);
             /// Here we go through chart objects to see where objects should be connected to.
             /// when we find the right object we call drawConnection with correspandant indexes.
             int z = 0, y = 0, t;

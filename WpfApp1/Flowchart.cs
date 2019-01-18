@@ -137,17 +137,23 @@ namespace WpfApp1
                 return;
             }
 
+
+            //****************Making Block to add to our list<Block>*****************
             List<Object> objects = new List<Object>();
             for (int g = 0; g < input.Count; g++)
             {
-                Object newObject = new Object() { Name = input[g] };
-                objects.Add(newObject);
+                Block inBlock = new Block() { Title = input[g] };
+                objects.Add(inBlock);
+                for (int d = 0; d < ChartData.Count; d++)
+                {
+
+                }
             }
-            //****************Making Block to add our list<Block>*****************
-            Block block = new Block()
-            {
+            Block block = new Block();
+            block = new Block(){
+                Title = output,
                 Name = fName,
-                Output = new Object() { Name = output },
+                Output = new Block() { Title = output },
                 serialNumber = serialNumber,
                 Inputs = objects
                 
@@ -158,7 +164,6 @@ namespace WpfApp1
             DataAdaptorForDrawing();
             
         }
-
 
         public void DataAdaptorForDrawing()
         {
@@ -176,27 +181,20 @@ namespace WpfApp1
             //int cntr = 0;
             bool firstTimeFound = false;
             Warning = "";
-
-            List<string> function = new List<string>();
-
-                foreach (var item1 in ChartData.Last().Inputs)
-                {
-                    function.Add(item1.Name);
-                }
-                function.Add(ChartData.Last().Output.Name);
-                function.Add(ChartData.Last().Name);
-                function.Add(ChartData.Last().serialNumber);
-
-
             // we make a list of current entry in orderof Inputs, Output, Function Name
             // we actually make a loop into this list for our calculation.
-            //List<string> function = new List<string>(input)
-            //{
-            //        output,
-            //        fName,
-            //        serialNumber
-            //};
-            //Starting the insertion process.
+            List<string> function = new List<string>();
+
+            foreach (var item1 in ChartData.Last().Inputs)
+            {
+                var item2 = item1 as Block;
+                function.Add(item2.Title);
+            }
+            var item3 = ChartData.Last() as Block;
+            function.Add(item3.Title);
+            function.Add(item3.Name);
+            function.Add(item3.serialNumber);
+
             for (int i = 0; i <= function.Count - 2; i++)
             {
                 chart.Add(new List<List<string>>());
