@@ -25,23 +25,17 @@ namespace WpfApp1
     //*************************************************
     public class Flowchart :INotifyPropertyChanged
     {
-        //We make some separate lists for keeping Inputs, OutOuts and Functions.
-        //*************************************************
-        List<string> functions = new List<string>();
-        List<string> outputs = new List<string>();
-        List<List<string>> inputs = new List<List<string>>();
-        //*************************************************
 
         //This is the list we keep all our Entries into it.
         // Order of each object is, Inputs-Function Name-Output
         // Example A,B,C,D,E,F1,G
-        public List<List<string>> allFuncs = new List<List<string>>();
+        public List<List<string>> allFuncs;
         // Class Constructor.
         public Flowchart() {
             _chart = new List<List<List<string>>>();
+            _chartData = new List<Block>();
+            allFuncs = new List<List<string>>();
         }
-
-
         /// <summary>
         /// Finding if the Flowchart has Cycle in it or not.
         /// 
@@ -55,42 +49,49 @@ namespace WpfApp1
         /// </summary>
         /// <param name="checkList"></param>
         /// In first call this list has only one object which is CurrentUserOutput
-        /// <param name="CurrentUserOutput"></param>
+        /// <param name="checkItem"></param>
         /// We need to compare outputs of each steps with this parameter so we pass it next to our new Checklist in each recursive step.
         /// <returns></returns>
-        private bool isCycle(List<string> checkList,string CurrentUserOutput)
+        private bool isCycle(List<string> checkList,string checkItem)
         {
             // If the chart does not have any cycle. Eventually we will get to the point that our new input list does not
-            // have any output which means we get to the end of flowchart. So if we get to this point we can say 
-            // the flowchart will not have cycle if we insert the user entries to the chart.
+            // have any output which means we have got to end of the flowchart. So if we get to this point we can say 
+            // the flowchart is not gonna have cycle if we insert the user entries to it.
             if (!checkList.Any()) { return false; }
             else
             {
                 // it is gonna be the output of the current function and input of the next function (recursive).
                 List<string> iO = new List<string>();
-                // for items in input
+                // for items in checkList we check which functions contain them as an input and then we keep output
+                // of those functions in iO.
                 for (int i = 0; i <= checkList.Count - 1; i++)
                 {
-                    foreach (var item in allFuncs.Where(s => s.Contains(checkList[i])))
+                    //allfunc is List<List<string>> contains all functions that user entered by now in this pattern.
+                    // Input -> Function Name -> Output. Example of an item in allFuncs: A B C D E F1 F
+                    // so the last item is the output of that function.
+                    foreach (var f in allFuncs.Where(s => s.Contains(checkList[i])))
                     {
-                        if (!item.Last().Equals(checkList[i]))
-                             iO.Add(item.Last());
+                        //we make sure that item in checklist is not output of the function.
+                        if (!f.Last().Equals(checkList[i]))
+                             iO.Add(f.Last());
                     }
                 }
-                // check if any of our outputs are the same with our first entry.
-                if (iO.Contains(CurrentUserOutput))
+                // check if any of our outputs are the same with checkItem if the answer is yes so there is a cycle in the chart.
+                if (iO.Contains(checkItem))
                 {
                     return true;
                 }
-                // if the code get here it returns itself to repeat the process.
-                return isCycle(iO, CurrentUserOutput);
+                // if the code get here, it calls itself with the new checklist.
+                return isCycle(iO, checkItem);
             }
         }
 
         int serialCounter = 1;
+
+
         public void Add(List<string> input, string output, string fName)
         {
-            string serialNumber = fName + "-" +Convert.ToString(serialCounter);
+            string serialNumber = fName + "-" + Convert.ToString(serialCounter);
             serialCounter++;
             // check inputs and output have duplicate(s).
             for (int r = 0; r <= input.Count - 1; r++)
@@ -125,22 +126,47 @@ namespace WpfApp1
                 };
             // 
             allFuncs.Add(f);
-            List<string> a = new List<string>();
 
             // We add the "user entry for output" to the list and then we call the cycle function
-            // with that list and also "user entry for output" as a second paratmeter.
+            List<string> a = new List<string>();
             a.Add(output);
             if (isCycle(a, output))
             {
                 allFuncs.Remove(allFuncs.Last());
-                Warning = "There is a Loop!";
+                Warning = "There is a Cycle!";
                 return;
             }
+
+            List<Object> objects = new List<Object>();
+            for (int g = 0; g < input.Count; g++)
+            {
+                Object newObject = new Object() { Name = input[g] };
+                objects.Add(newObject);
+            }
+            //****************Making Block to add our list<Block>*****************
+            Block block = new Block()
+            {
+                Name = fName,
+                Output = new Object() { Name = output },
+                serialNumber = serialNumber,
+                Inputs = objects
+                
+            };
+            ChartData.Add(block);
+            //*********************************************************************
+            
+            DataAdaptorForDrawing();
+            
+        }
+
+
+        public void DataAdaptorForDrawing()
+        {
             //adjustment is the list that has the index adjustments in it.
             // It helps us in inserting new user inputs to our current chart.
             // we have the number of inputs of 0's and then 2 and 1 for output and function name
             //Because in the drawing their order is INPUTS ----> Function Name -----> OOUTPUT
-            var adjustements = new List<double>(new double[input.Count]);
+            var adjustements = new List<double>(new double[ChartData.Last().Inputs.Count]);
             adjustements.Add(2);
             adjustements.Add(1);
             //Stack number that we find the inserting object in it.
@@ -150,30 +176,36 @@ namespace WpfApp1
             //int cntr = 0;
             bool firstTimeFound = false;
             Warning = "";
-            //**********Making Functions, Inputs and output.*************************
-            functions.Add(fName);
-            if (!outputs.Contains(output)) outputs.Add(output);
-            inputs.Add(input);
-            //**************************************************
-     
+
+            List<string> function = new List<string>();
+
+                foreach (var item1 in ChartData.Last().Inputs)
+                {
+                    function.Add(item1.Name);
+                }
+                function.Add(ChartData.Last().Output.Name);
+                function.Add(ChartData.Last().Name);
+                function.Add(ChartData.Last().serialNumber);
+
+
             // we make a list of current entry in orderof Inputs, Output, Function Name
             // we actually make a loop into this list for our calculation.
-            List<string> function = new List<string>(input)
-            {
-                    output,
-                    fName,
-                    serialNumber
-            };
+            //List<string> function = new List<string>(input)
+            //{
+            //        output,
+            //        fName,
+            //        serialNumber
+            //};
             //Starting the insertion process.
-            for (int i = 0; i <= function.Count-2;i++)
-                {
-                    chart.Add(new List<List<string>>());
-                    bool isFound = false;
+            for (int i = 0; i <= function.Count - 2; i++)
+            {
+                chart.Add(new List<List<string>>());
+                bool isFound = false;
                 // Inserting of Function Name
                 if (i == function.Count - 2)
                 {
                     //The index of Function number column is maxstacknumber + 1;
-                    chart[maxStackNumber + 1].Add(new List<string>() { function[function.Count -1], function[function.Count - 3], });
+                    chart[maxStackNumber + 1].Add(new List<string>() { function[function.Count - 1], function[function.Count - 3], });
                     //after inserting function name, we check if previous Entries(inputs and output) 
                     // has been found in the chart or not. If answer is false so we will add them all.
                     if (!firstTimeFound)
@@ -187,60 +219,61 @@ namespace WpfApp1
                         }
                     }
                 }
-                    
-                    for (int j = 0; j < chart.Count; j+=2)
-                    { 
-                        for(int k=0; k <= chart[j].Count -1; k++)
+
+                for (int j = 0; j < chart.Count; j += 2)
+                {
+                    for (int k = 0; k <= chart[j].Count - 1; k++)
+                    {
+                        // When we find the entries in our current chart.
+                        if (chart[j][k][0].Equals(function[i]))
                         {
-                            // When we find the entries in our current chart.
-                            if (chart[j][k][0].Equals(function[i])){
-                               //if the object we have found is not the output, we just add its correspandant
-                               // function name into its list. for example user has A in his new Entry
-                               // and we have found A in 2nd column. A,F1,F2. It means A is connected to F1 and
-                               // F2 by now. Now we want to insert our new A and its function name is F5 so the
-                               // List is like A F1 F2 F5
-                                if(i!=function.Count-3 ) chart[j][k].Add(function.Last());
-                                // if it is output we check if it is in the first column, if yes 
-                                // we need to insert to new columns in index 0 of our chart to insert
-                                // our new entries.
+                            //if the object we have found is not the output, we just add its correspandant
+                            // function name into its list. for example user has A in his new Entry
+                            // and we have found A in 2nd column. A,F1,F2. It means A is connected to F1 and
+                            // F2 by now. Now we want to insert our new A and its function name is F5 so the
+                            // List is like A F1 F2 F5
+                            if (i != function.Count - 3) chart[j][k].Add(function.Last());
+                            // if it is output we check if it is in the first column, if yes 
+                            // we need to insert to new columns in index 0 of our chart to insert
+                            // our new entries.
                             else
+                            {
+                                // If output is found in 0 index and we have not found any 
+                                // input entry in our chart by now.
+                                if (j == 0 && !firstTimeFound)
                                 {
-                                    // If output is found in 0 index and we have not found any 
-                                    // input entry in our chart by now.
-                                    if (j == 0 && !firstTimeFound)
-                                    {
-                                        chart.Insert(0, new List<List<string>>());
-                                        chart.Insert(0, new List<List<string>>());
-                                    }
+                                    chart.Insert(0, new List<List<string>>());
+                                    chart.Insert(0, new List<List<string>>());
                                 }
-                                // after adding the current item, we check if previous items has been found or not
-                                // if the answer is false so we have to insert them. The reason for doing it now is
-                                // we have not known the stacknumber by now. 
-                                // The value of !firstTimeFound is false unless we found any of our entries in our current
-                                // chart. As soon As we find the first one we have Stacknumber and actually we know where should
-                                // we insert our graph.
-                                if (!firstTimeFound)
-                                {
-                                    for(int l = 0; l < i; l++)
-                                    {
-                                        chart[j - Convert.ToInt32(adjustements[i])].Add(new List<string>() { function[l], function.Last() });
-                                    }
-                                }
-                                // Giving value to stacknumber, we have consider adjusments here.
-                                // becuase based on the found entry is input, output or function name
-                                // Inserting of others are different.
-                                currentStackNumber = j - Convert.ToInt32(adjustements[i]);
-                                // Making maxStackNumber
-                                if (currentStackNumber > maxStackNumber) maxStackNumber = currentStackNumber;
-                                //we have found an object so it is time to make firstTimeFound true.
-                                firstTimeFound = true;
-                                isFound = true;
-                                break;
                             }
+                            // after adding the current item, we check if previous items has been found or not
+                            // if the answer is false so we have to insert them. The reason for doing it now is
+                            // we have not known the stacknumber by now. 
+                            // The value of !firstTimeFound is false unless we found any of our entries in our current
+                            // chart. As soon As we find the first one we have Stacknumber and actually we know where should
+                            // we insert our graph.
+                            if (!firstTimeFound)
+                            {
+                                for (int l = 0; l < i; l++)
+                                {
+                                    chart[j - Convert.ToInt32(adjustements[i])].Add(new List<string>() { function[l], function.Last() });
+                                }
+                            }
+                            // Giving value to stacknumber, we have consider adjusments here.
+                            // becuase based on the found entry is input, output or function name
+                            // Inserting of others are different.
+                            currentStackNumber = j - Convert.ToInt32(adjustements[i]);
+                            // Making maxStackNumber
+                            if (currentStackNumber > maxStackNumber) maxStackNumber = currentStackNumber;
+                            //we have found an object so it is time to make firstTimeFound true.
+                            firstTimeFound = true;
+                            isFound = true;
+                            break;
                         }
-                        // after finding the element in the current chart we can just go for next one.
-                        if (isFound) break;
                     }
+                    // after finding the element in the current chart we can just go for next one.
+                    if (isFound) break;
+                }
                 // If we did not find the entry in the current chart and also it is the same situation
                 // with all of our previous entries. We just continue for next items.
                 if (!isFound && !firstTimeFound) continue;
@@ -253,8 +286,10 @@ namespace WpfApp1
                     /// if entry is output
                     else if (i == function.Count - 3) chart[maxStackNumber + 2].Add(new List<string>() { function[i] });
                 }
-                }
+            }
+            function.Clear();
         }
+
         // This is the Warning Property
         private string _warning;
         public string Warning
@@ -269,7 +304,7 @@ namespace WpfApp1
                 OnPropertyChanged("Warning");
             }
         }
-        //This is our chart.
+        //This is our chart data for drawing
         private List<List<List<string>>> _chart;
         public List<List<List<string>>> chart
         {
@@ -282,6 +317,20 @@ namespace WpfApp1
                 _chart = value;
             }
         }
+        private List<Block> _chartData;
+        public List<Block> ChartData
+        {
+            get
+            {
+                return _chartData;
+            }
+            set
+            {
+                _chartData = value;
+            }
+        }
+
+
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(string name)
         {

@@ -105,8 +105,8 @@ namespace WpfApp1
                 FontSize = 24,
             };
             canva.Children.Add(textBlock);
-            textBlock.Margin = new Thickness((canva.ActualWidth / numberofStacks) * (j) + (canva.ActualWidth / numberofStacks) / 5 - textBlock.ActualWidth, (canva.ActualHeight / numberofSlices) * (k) + (canva.ActualHeight / numberofSlices) / 6 + topAddOn(j), 0, 0);
-            /// Here we go othrough chart objects to see where objects should be connected to.
+            textBlock.Margin = new Thickness((canva.ActualWidth / numberofStacks) * (j), (canva.ActualHeight / numberofSlices) * (k) + topAddOn(j), 0, 0);
+            /// Here we go through chart objects to see where objects should be connected to.
             /// when we find the right object we call drawConnection with correspandant indexes.
             int z = 0, y = 0, t;
             for (int x = 1; x <= fc.chart[j][k].Count - 1; x++)
@@ -117,7 +117,7 @@ namespace WpfApp1
                     {
                         if (fc.chart[y][z][0].Equals(fc.chart[j][k][x]))
                         {
-                            Drawlines(j, k, x, y, z, numberofStacks);
+                            DrawConnection(j, k, x, y, z, numberofStacks);
                         }
                     }
                 }
@@ -139,7 +139,7 @@ namespace WpfApp1
         /// <param name="z"></param>
         /// it is slice number of the last item.
         /// <param name="stacks"></param>
-        private void Drawlines(int j, int k, int x, int y, int z, int stacks)
+        private void DrawConnection(int j, int k, int x, int y, int z, int stacks)
         {
             strokeThickness = 1;
             Random rand = new Random();
